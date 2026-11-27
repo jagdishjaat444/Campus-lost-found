@@ -1,0 +1,1200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1d4ed8">
+<meta name="description" content="SMVDU Campus Lost & Found — report missing items, share found belongings, and help campus items get home.">
+<title>Campus Connect | Lost &amp; Found</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Figtree:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  --cs:light;
+  --bg:#f0f4ff;
+  --bg1:rgba(59,130,246,.20);
+  --bg2:rgba(251,146,60,.18);
+  --ink:#0f172a;
+  --mute:#64748b;
+  --line:#c7d2fe;
+  --lost:#e11d48;
+  --found:#0d9488;
+  --ret:#7c3aed;
+  --h1c:#1d4ed8;
+  --card:rgba(255,255,255,.82);
+  --card-border:rgba(15,23,42,.08);
+  --field:#ffffff;
+  --opt:#ffffff;
+  --shadow:0 20px 50px -12px rgba(15,23,42,.18);
+  --shadow-sm:0 8px 24px -6px rgba(15,23,42,.12);
+  --chip:rgba(15,23,42,.05);
+  --glass:blur(20px) saturate(160%);
+  --radius:22px;
+  --hd:"Outfit",system-ui,sans-serif;
+  --bd:Figtree,system-ui,sans-serif;
+  color-scheme:var(--cs);
+}
+html[data-theme="sunset"]{
+  --bg:#fff5eb;
+  --bg1:rgba(249,115,22,.22);
+  --bg2:rgba(251,191,36,.20);
+  --ink:#3f1d12;
+  --mute:#9a6b5a;
+  --line:#fed7aa;
+  --h1c:#ea580c;
+  --card:rgba(255,251,245,.85);
+  --card-border:rgba(63,29,18,.10);
+  --shadow:0 20px 50px -12px rgba(63,29,18,.16);
+}
+html[data-theme="forest"]{
+  --bg:#ecfdf5;
+  --bg1:rgba(16,185,129,.20);
+  --bg2:rgba(6,182,212,.16);
+  --ink:#064e3b;
+  --mute:#3f6b52;
+  --line:#a7f3d0;
+  --h1c:#059669;
+  --card:rgba(240,253,244,.85);
+  --card-border:rgba(6,78,59,.10);
+  --shadow:0 20px 50px -12px rgba(6,78,59,.14);
+}
+html[data-theme="midnight"]{
+  --cs:dark;
+  --bg:#08081f;
+  --bg1:rgba(139,92,246,.28);
+  --bg2:rgba(14,165,233,.20);
+  --ink:#f1f0ff;
+  --mute:#a5a3c9;
+  --line:#2e2e5e;
+  --lost:#fb7185;
+  --found:#2dd4bf;
+  --ret:#c4b5fd;
+  --h1c:#fbbf24;
+  --card:rgba(255,255,255,.07);
+  --card-border:rgba(255,255,255,.10);
+  --field:rgba(0,0,0,.35);
+  --opt:#12122e;
+  --shadow:0 24px 60px -12px rgba(0,0,0,.55);
+  --shadow-sm:0 10px 30px -8px rgba(0,0,0,.4);
+  --chip:rgba(255,255,255,.06);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:env(safe-area-inset-top,0);overflow-x:clip;max-width:100%}
+body{
+  margin:0;min-height:100vh;overflow-x:clip;max-width:100vw;
+  color:var(--ink);font:16px/1.55 var(--bd);
+  background:
+    radial-gradient(1200px 600px at 90% -10%,var(--bg1),transparent 65%),
+    radial-gradient(900px 500px at -15% 40%,var(--bg2),transparent 65%),
+    var(--bg);
+  -webkit-font-smoothing:antialiased;
+}
+#bg3d{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;opacity:.48;filter:blur(1px);transition:filter .25s,opacity .25s}
+.orb{position:fixed;border-radius:50%;filter:blur(68px);opacity:.18;pointer-events:none;z-index:0;animation:float 20s ease-in-out infinite alternate}
+.o1{width:280px;height:280px;background:#ff6b6b;top:5%;left:-100px}
+.o2{width:300px;height:300px;background:#748ffc;top:40%;right:-130px;animation-delay:-7s}
+.o3{width:240px;height:240px;background:#20c997;bottom:5%;left:15%;animation-delay:-13s}
+@keyframes float{to{transform:translate(50px,-80px) scale(1.15)}}
+
+.hero{position:relative;z-index:1;padding:18px 18px 28px}
+.wrap{max-width:640px;margin:0 auto}
+.themes{
+  display:flex;gap:10px;justify-content:flex-end;align-items:center;
+  margin-bottom:18px;font-size:.72rem;color:var(--mute);font-weight:700;letter-spacing:.04em
+}
+.themes button{
+  width:32px;height:32px;border-radius:50%;border:3px solid rgba(255,255,255,.7);
+  cursor:pointer;padding:0;box-shadow:0 4px 14px rgba(0,0,0,.15);
+  transition:transform .25s cubic-bezier(.34,1.5,.64,1)
+}
+.themes button:hover{transform:scale(1.18)}
+.themes button[aria-pressed=true]{outline:3px solid var(--ink);outline-offset:3px}
+.hw{display:grid;grid-template-columns:1fr 120px;gap:18px;align-items:center}
+h1{
+  font:800 clamp(2.1rem,9vw,3.4rem)/1.05 var(--hd);
+  margin:0 0 14px;letter-spacing:-.04em;color:var(--h1c);
+  text-shadow:0 2px 0 color-mix(in srgb,var(--h1c) 70%,#000),0 4px 0 color-mix(in srgb,var(--h1c) 50%,#000),0 16px 30px rgba(0,0,0,.15)
+}
+.hero p{margin:0 0 22px;max-width:28ch;font-weight:600;color:var(--mute);font-size:1.05rem;line-height:1.5}
+
+.cta{display:flex;gap:12px;flex-wrap:wrap}
+.cta button{
+  font:700 1rem var(--hd);color:#fff;border:0;border-radius:18px;
+  padding:15px 22px;cursor:pointer;position:relative;
+  transition:transform .15s,box-shadow .15s;
+  letter-spacing:.01em
+}
+.cta button:first-child{
+  background:linear-gradient(135deg,#ff6b8a,#e11d48);
+  box-shadow:0 8px 0 #9f1239,0 16px 32px rgba(225,29,72,.35)
+}
+.cta button:last-child{
+  background:linear-gradient(135deg,#2dd4bf,#0d9488);
+  color:#042f2e;
+  box-shadow:0 8px 0 #0f766e,0 16px 32px rgba(13,148,136,.3)
+}
+.cta button:hover{transform:translateY(-3px)}
+.cta button:active{transform:translateY(5px);box-shadow:0 3px 0 #9f1239}
+
+.scene{width:110px;height:110px;perspective:600px;cursor:grab;touch-action:none}
+.scene:active{cursor:grabbing}
+.cube{width:100%;height:100%;position:relative;transform-style:preserve-3d;transform:rotateX(-22deg) rotateY(28deg)}
+.cube div{
+  position:absolute;inset:0;display:grid;place-items:center;
+  font:800 .9rem var(--hd);letter-spacing:.08em;color:#fff;
+  border:2px solid rgba(255,255,255,.55);border-radius:8px
+}
+.cube .a{transform:translateZ(55px);background:linear-gradient(135deg,#ff5d73,#c026d3)}
+.cube .b{transform:rotateY(90deg) translateZ(55px);background:linear-gradient(135deg,#2ee6d6,#2563eb)}
+.cube .c{transform:rotateY(180deg) translateZ(55px);background:linear-gradient(135deg,#ffb020,#f97316)}
+.cube .d{transform:rotateY(-90deg) translateZ(55px);background:linear-gradient(135deg,#a78bfa,#6d28d9)}
+.cube .e{transform:rotateX(90deg) translateZ(55px);background:linear-gradient(135deg,#34d399,#0e7490)}
+.cube .f{transform:rotateX(-90deg) translateZ(55px);background:linear-gradient(135deg,#f472b6,#be123c)}
+.hint{font-size:.68rem;color:var(--mute);text-align:center;margin-top:12px;font-weight:600}
+
+main{position:relative;z-index:1;max-width:640px;margin:0 auto;padding:0 18px 50px}
+
+.stats{
+  display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;
+  margin-bottom:28px
+}
+.stats div{
+  border-radius:20px;padding:16px 10px;text-align:center;
+  font-size:.75rem;font-weight:700;color:#fff;letter-spacing:.04em;
+  box-shadow:var(--shadow-sm);position:relative;overflow:hidden
+}
+.stats div::after{
+  content:"";position:absolute;top:-30%;right:-20%;width:80px;height:80px;
+  background:rgba(255,255,255,.12);border-radius:50%
+}
+.stats div:nth-child(1){background:linear-gradient(145deg,#ff6b8a,#e11d48)}
+.stats div:nth-child(2){background:linear-gradient(145deg,#2dd4bf,#0d9488)}
+.stats div:nth-child(3){background:linear-gradient(145deg,#a78bfa,#6d28d9)}
+.stats b{display:block;font:800 2.1rem/1.1 var(--hd);margin-bottom:2px}
+
+h2{font:800 1.5rem/1.2 var(--hd);margin:32px 0 14px;letter-spacing:-.03em}
+h3{font:700 1.1rem var(--hd);margin:16px 0 0}
+
+.filters{display:flex;gap:10px;margin-bottom:12px}
+label{display:block;font-size:.84rem;color:var(--mute);margin:14px 0 6px;font-weight:600}
+input,select,textarea{
+  width:100%;font:inherit;color:var(--ink);background:var(--field);
+  border:1.5px solid var(--line);border-radius:14px;padding:13px 15px;
+  transition:border-color .2s,box-shadow .2s
+}
+select option{background:var(--opt);color:var(--ink)}
+input::placeholder,textarea::placeholder{color:var(--mute);opacity:.7}
+input:focus,select:focus,textarea:focus{
+  outline:0;border-color:var(--found);
+  box-shadow:0 0 0 4px color-mix(in srgb,var(--found) 20%,transparent)
+}
+
+.chips{display:flex;gap:8px;overflow-x:auto;padding:10px 0 6px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chips button{
+  flex:none;font:700 .8rem var(--bd);padding:9px 16px;border-radius:999px;
+  border:1.5px solid var(--line);background:var(--chip);color:var(--ink);
+  cursor:pointer;transition:all .2s
+}
+.chips button[aria-pressed=true]{
+  background:var(--found);color:#fff;border-color:var(--found);
+  box-shadow:0 4px 16px color-mix(in srgb,var(--found) 40%,transparent)
+}
+
+#list{margin-top:14px}
+.sc{
+  margin-bottom:18px;border-radius:var(--radius);
+  background:var(--card);border:1px solid var(--card-border);
+  box-shadow:var(--shadow);backdrop-filter:var(--glass);-webkit-backdrop-filter:var(--glass);
+  overflow:hidden;transition:transform .25s,box-shadow .25s;
+  position:relative
+}
+.sc.Lost{border-left:5px solid var(--lost)}
+.sc.Found{border-left:5px solid var(--found)}
+.sc.done{opacity:.55}
+.sc:hover{transform:translateY(-3px);box-shadow:0 28px 60px -12px rgba(15,23,42,.22)}
+
+.hd{
+  display:flex;align-items:center;gap:14px;padding:16px 16px 14px;
+  cursor:pointer
+}
+.av{
+  width:52px;height:52px;border-radius:16px;display:grid;place-items:center;
+  color:#fff;font:800 1.1rem var(--hd);flex:none;
+  box-shadow:0 6px 16px rgba(0,0,0,.25)
+}
+.who{flex:1;min-width:0}
+.who b{font:800 1.1rem/1.25 var(--hd);display:block}
+.en{font-size:.78rem;color:var(--mute);margin-top:2px}
+.wh{font-size:.93rem;font-weight:600;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.stamp{
+  flex:none;font:800 .7rem var(--hd);letter-spacing:.1em;text-transform:uppercase;
+  border:2.5px solid;border-radius:10px;padding:4px 10px;
+  transform:rotate(-6deg);background:rgba(255,255,255,.85)
+}
+html[data-theme="midnight"] .stamp{background:rgba(0,0,0,.4)}
+.Lost .stamp{color:var(--lost)}.Found .stamp{color:var(--found)}.done .stamp{color:var(--ret)}
+
+.bd{padding:0 16px 16px;border-top:1px dashed var(--line)}
+.dl{display:grid;grid-template-columns:auto 1fr;gap:6px 16px;margin:14px 0;font-size:.9rem}
+.dl dt{color:var(--mute)}.dl dd{margin:0;font-weight:600}
+.hid{color:var(--mute);font-style:italic}
+.pdfrow{display:flex;align-items:center;gap:12px;margin-top:10px;font-size:.84rem;color:var(--mute)}
+.th,#pv img{width:72px;height:72px;object-fit:cover;border-radius:14px;border:2px solid var(--line)}
+#pv{display:none;margin-top:10px;align-items:center;gap:12px;font-size:.84rem;color:var(--mute);flex-wrap:wrap}
+.pick{flex-wrap:wrap}.pick button{min-width:calc(50% - 6px)}
+.pick button:nth-child(4){background:linear-gradient(180deg,#f9a8d4,#f472b6)}
+#pDrop{margin-top:10px;padding:14px;border:2px dashed var(--line);border-radius:14px;text-align:center;font-size:.82rem;color:var(--mute);font-weight:600;cursor:pointer;transition:all .2s}
+#pDrop.over,#pDrop:focus-visible{border-color:var(--found);background:color-mix(in srgb,var(--found) 10%,transparent);color:var(--ink)}
+.rm-photo{padding:8px 14px;border-radius:999px;border:1.5px solid var(--lost);background:transparent;color:var(--lost);font:700 .8rem var(--bd);cursor:pointer}
+.rm-photo:hover{background:color-mix(in srgb,var(--lost) 12%,transparent)}
+
+details{margin-top:10px}
+summary{cursor:pointer;font-weight:700;color:var(--found)}
+details input{margin-top:8px}
+.act{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px}
+.act button,details button{
+  margin-top:10px;padding:9px 16px;font:700 .84rem var(--bd);
+  background:var(--chip);color:var(--ink);border:1.5px solid var(--line);
+  border-radius:999px;cursor:pointer;transition:all .2s
+}
+.act button:hover{background:color-mix(in srgb,var(--found) 15%,transparent);border-color:var(--found)}
+.err{color:var(--lost);font-size:.84rem;margin-top:6px}
+.empty{
+  color:var(--mute);text-align:center;padding:40px 24px;
+  border:2px dashed var(--line);border-radius:var(--radius);
+  font-weight:500
+}
+.match{
+  margin:12px 0;padding:12px 14px;border-radius:14px;
+  background:color-mix(in srgb,var(--found) 12%,transparent);
+  border:1.5px dashed var(--found);font-size:.88rem
+}
+.match b{color:var(--found)}
+
+form{
+  border-radius:26px;padding:22px;
+  background:var(--card);border:1px solid var(--card-border);
+  box-shadow:var(--shadow);backdrop-filter:var(--glass);-webkit-backdrop-filter:var(--glass);
+  margin-top:8px
+}
+form h2{margin-top:0}
+.sd{
+  border:2px solid color-mix(in srgb,var(--h1c) 30%,transparent);
+  border-radius:18px;padding:8px 16px 16px;margin-bottom:10px;
+  background:color-mix(in srgb,var(--h1c) 6%,transparent)
+}
+.row{display:flex;gap:12px}.row>div{flex:1}
+.type{display:flex;gap:12px}
+.type label{
+  flex:1;margin:0;color:var(--ink);border:2px solid var(--line);
+  border-radius:16px;padding:14px;text-align:center;cursor:pointer;
+  background:var(--field);transition:all .2s;font-weight:600
+}
+.type input{display:none}
+.type label:has(input[value=Lost]:checked){
+  border-color:var(--lost);color:var(--lost);
+  background:color-mix(in srgb,var(--lost) 8%,var(--field));
+  box-shadow:0 0 0 4px color-mix(in srgb,var(--lost) 15%,transparent)
+}
+.type label:has(input[value=Found]:checked){
+  border-color:var(--found);color:var(--found);
+  background:color-mix(in srgb,var(--found) 8%,var(--field));
+  box-shadow:0 0 0 4px color-mix(in srgb,var(--found) 15%,transparent)
+}
+.note{font-size:.78rem;color:var(--mute);margin:8px 0 0;line-height:1.45}
+.pick{display:flex;gap:10px}
+.pick button{
+  flex:1;font:700 .95rem var(--hd);padding:14px 8px;border-radius:14px;
+  border:0;color:#0f172a;cursor:pointer;
+  box-shadow:0 5px 0 rgba(0,0,0,.2);transition:transform .12s,box-shadow .12s
+}
+.pick button:active{transform:translateY(4px);box-shadow:0 1px 0 rgba(0,0,0,.2)}
+.pick button:nth-child(1){background:linear-gradient(180deg,#fde047,#facc15)}
+.pick button:nth-child(2){background:linear-gradient(180deg,#7dd3fc,#38bdf8)}
+.pick button:nth-child(3){background:linear-gradient(180deg,#86efac,#4ade80)}
+form>button{
+  margin-top:22px;width:100%;font:800 1.1rem var(--hd);
+  background:linear-gradient(135deg,#fde047,#f59e0b);
+  color:#1c1917;border:0;border-radius:18px;padding:17px;cursor:pointer;
+  box-shadow:0 8px 0 #b45309,0 18px 36px rgba(245,158,11,.3);
+  transition:transform .12s,box-shadow .12s;letter-spacing:.02em
+}
+form>button:hover{transform:translateY(-2px)}
+form>button:active{transform:translateY(6px);box-shadow:0 2px 0 #b45309}
+
+.sub2{color:var(--mute);font-size:.88rem;margin:-8px 0 14px;font-weight:500}
+.pod{display:flex;align-items:flex-end;justify-content:center;gap:14px;padding:8px 0}
+.pod>div{flex:1;max-width:130px;text-align:center}
+.pod .bl{
+  border-radius:16px 16px 0 0;display:grid;place-items:center;color:#fff;
+  font:800 1.9rem var(--hd);box-shadow:0 12px 28px rgba(0,0,0,.2);
+  text-shadow:0 2px 6px rgba(0,0,0,.3)
+}
+.g1 .bl{height:120px;background:linear-gradient(180deg,#fde047,#f59e0b)}
+.g2 .bl{height:90px;background:linear-gradient(180deg,#e2e8f0,#94a3b8)}
+.g3 .bl{height:68px;background:linear-gradient(180deg,#fdba74,#c2410c)}
+.pod .nm{font-weight:800;font-size:.88rem;margin-bottom:6px}
+.pod .pt{font-size:.74rem;color:var(--mute);margin-bottom:4px;font-weight:600}
+
+.toast{
+  position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0));
+  transform:translate(-50%,30px);background:var(--ink);color:var(--bg);
+  padding:13px 22px;border-radius:999px;font-weight:700;font-size:.93rem;
+  opacity:0;transition:.35s cubic-bezier(.34,1.3,.64,1);z-index:98;
+  pointer-events:none;max-width:90vw;text-align:center;
+  box-shadow:0 16px 40px rgba(0,0,0,.3)
+}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+
+.s3b{
+  position:fixed;right:18px;bottom:calc(18px + env(safe-area-inset-bottom,0));
+  z-index:97;width:54px;height:54px;border-radius:50%;
+  border:2px solid rgba(255,255,255,.6);font:800 .9rem var(--hd);color:#fff;
+  background:linear-gradient(135deg,var(--lost),var(--ret));
+  box-shadow:0 10px 28px rgba(0,0,0,.3),0 0 0 6px color-mix(in srgb,var(--ret) 20%,transparent);
+  cursor:pointer;transition:transform .2s
+}
+.s3b:hover{transform:scale(1.08)}
+.s3b:active{transform:scale(.92)}
+.s3p{
+  position:fixed;right:18px;bottom:calc(84px + env(safe-area-inset-bottom,0));
+  z-index:97;width:min(300px,calc(100vw - 36px));padding:18px;
+  border-radius:22px;background:var(--opt);border:1px solid var(--card-border);
+  box-shadow:var(--shadow)
+}
+.s3p[hidden]{display:none}
+.s3p h4{margin:0 0 8px;font:800 1.1rem var(--hd)}
+.s3p select{margin-bottom:6px}
+.chk{display:flex;gap:10px;align-items:center;color:var(--ink);font-weight:600;font-size:.9rem;margin-top:12px}
+.chk input{width:auto;accent-color:var(--found)}
+
+footer{text-align:center;color:var(--mute);font-size:.84rem;padding:16px 18px 40px;position:relative;z-index:1}
+
+@media (prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+  html{scroll-behavior:auto}
+}
+
+/* Campus Connect visual refresh */
+:root{--radius:24px}
+body{background:
+ radial-gradient(900px 520px at 100% -5%,var(--bg1),transparent 68%),
+ radial-gradient(760px 520px at -10% 35%,var(--bg2),transparent 65%),var(--bg)}
+.hero{padding-top:24px;padding-bottom:38px}
+.wrap,main{max-width:900px}
+.themes{gap:12px;margin-bottom:26px}
+.themes span{margin-right:4px}
+.hw{grid-template-columns:minmax(0,1fr) 150px;gap:28px}
+h1{font-size:clamp(2.55rem,7vw,4.6rem);line-height:.99;letter-spacing:-.055em;text-shadow:0 3px 0 color-mix(in srgb,var(--h1c) 42%,transparent),0 15px 34px rgba(0,0,0,.12)}
+.hero p{max-width:36ch;font-size:1.08rem}
+.eyebrow,.section-kicker{display:inline-flex;align-items:center;gap:8px;color:var(--mute);font-size:.69rem;font-weight:800;letter-spacing:.14em;margin-bottom:10px}
+.live-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#10b981;box-shadow:0 0 0 4px rgba(16,185,129,.13)}
+.cta button{border-radius:15px;min-height:52px;padding:14px 18px}
+.scene{width:130px;height:130px}
+.cube .a{transform:translateZ(65px)}.cube .b{transform:rotateY(90deg) translateZ(65px)}
+.cube .c{transform:rotateY(180deg) translateZ(65px)}.cube .d{transform:rotateY(-90deg) translateZ(65px)}
+.cube .e{transform:rotateX(90deg) translateZ(65px)}.cube .f{transform:rotateX(-90deg) translateZ(65px)}
+main{padding:0 22px 64px}
+.stats{gap:14px;margin-bottom:34px}
+.stats div{padding:20px 12px;border-radius:22px;backdrop-filter:blur(12px)}
+.stats b{font-size:2.4rem}
+.section-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-top:8px}
+.section-head h2{margin-top:0}
+.live-pill{display:inline-flex;align-items:center;gap:8px;padding:8px 11px;border-radius:999px;background:var(--card);border:1px solid var(--card-border);font-size:.72rem;font-weight:700;color:var(--mute);white-space:nowrap;margin-bottom:15px}
+h2{font-size:clamp(1.45rem,4vw,1.8rem);margin-top:36px}
+.filters{gap:12px}.filters select{min-width:0}
+#q{margin-top:2px}
+.chips{padding:12px 0 8px}
+.chips button{padding:10px 17px}
+.sc{border-radius:22px;box-shadow:var(--shadow-sm);margin-bottom:14px}
+.sc:hover{transform:translateY(-4px)}
+.hd{padding:18px;gap:13px}
+.av{border-radius:17px;width:54px;height:54px}
+.stamp{letter-spacing:.06em;transform:rotate(-3deg)}
+.bd{padding:0 18px 18px}
+form{padding:clamp(18px,4vw,30px);border-radius:28px;margin-top:10px}
+.form-intro{margin:-8px 0 22px;color:var(--mute);font-size:.94rem}
+.sd{border-radius:20px;padding:10px 16px 18px}
+input,select,textarea{border-radius:13px;min-height:48px}
+textarea{min-height:100px}
+.type label{display:flex;align-items:center;justify-content:center;min-height:58px}
+.type label span{font-size:.92rem}
+.pick button{border-radius:14px;min-height:48px}
+form>button{border-radius:15px;min-height:56px}
+.empty{background:var(--card);border-style:dashed}
+footer{line-height:1.9;padding-bottom:44px}
+footer strong{font-family:var(--hd);color:var(--ink)}
+.privacy-note{padding:11px 13px;border-radius:12px;background:var(--chip);margin:0 0 18px}footer small{display:inline-block;max-width:500px;margin-top:8px;font-size:.75rem;line-height:1.5}
+button:focus-visible,[role="button"]:focus-visible,summary:focus-visible{outline:3px solid var(--h1c);outline-offset:4px}
+@media(min-width:760px){
+ .hero{padding:28px 28px 44px}
+ .hw{grid-template-columns:minmax(0,1fr) 170px}
+ .scene{width:145px;height:145px}
+ .cube .a{transform:translateZ(72.5px)}.cube .b{transform:rotateY(90deg) translateZ(72.5px)}
+ .cube .c{transform:rotateY(180deg) translateZ(72.5px)}.cube .d{transform:rotateY(-90deg) translateZ(72.5px)}
+ .cube .e{transform:rotateX(90deg) translateZ(72.5px)}.cube .f{transform:rotateX(-90deg) translateZ(72.5px)}
+ .stats div{font-size:.85rem}
+}
+@media(max-width:520px){
+ .hero{padding:16px 15px 30px}
+ .hw{grid-template-columns:minmax(0,1fr) 76px;gap:8px}
+ .scene{width:74px;height:74px}
+ .cube div{font-size:.58rem;border-width:1px}
+ .cube .a{transform:translateZ(37px)}.cube .b{transform:rotateY(90deg) translateZ(37px)}
+ .cube .c{transform:rotateY(180deg) translateZ(37px)}.cube .d{transform:rotateY(-90deg) translateZ(37px)}
+ .cube .e{transform:rotateX(90deg) translateZ(37px)}.cube .f{transform:rotateX(-90deg) translateZ(37px)}
+ .hint{font-size:.58rem}
+ .cta{gap:9px}.cta button{font-size:.85rem;padding:12px 13px;flex:1}
+ main{padding:0 15px 48px}
+ .stats{gap:8px}.stats div{padding:14px 6px;border-radius:16px;font-size:.66rem}
+ .stats b{font-size:1.8rem}
+ .section-head{align-items:flex-start;flex-direction:column;gap:0}
+ .live-pill{margin:0 0 12px}
+ .row{gap:9px}
+ .type{gap:8px}.type label{padding:10px 7px}
+ .type label span{font-size:.8rem}
+ .pick{gap:7px}.pick button{font-size:.83rem}
+ .hd{padding:14px 12px;gap:10px}
+ .av{width:45px;height:45px;border-radius:14px}
+ .stamp{font-size:.61rem;padding:4px 6px;border-width:2px}
+ .who b{font-size:1rem}
+ .bd{padding:0 12px 14px}
+}
+
+
+.network{position:relative;z-index:2;margin:0 auto 24px;padding:18px;border:1px solid var(--card-border);border-radius:22px;background:var(--card);box-shadow:var(--shadow-sm);backdrop-filter:var(--glass);-webkit-backdrop-filter:var(--glass)}
+.network-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}.network h2{margin:2px 0 5px;font-size:1.35rem}.network p{margin:0 0 8px;color:var(--mute);font-size:.88rem}.net-badge{flex:none;font-size:.72rem;font-weight:800;padding:7px 10px;border-radius:999px;background:var(--chip);border:1px solid var(--line)}
+.network details{margin-top:10px;border-top:1px solid var(--line);padding-top:12px}.network summary{cursor:pointer;color:var(--h1c);font-weight:800}.network button{border:0;border-radius:12px;padding:12px 16px;background:var(--h1c);color:#fff;font:700 .9rem var(--bd);cursor:pointer;margin-top:10px}.network button:disabled{opacity:.55;cursor:wait}.auth-row{display:flex;gap:8px;align-items:stretch}.auth-row input{min-width:0;flex:1}.auth-row button{flex:none;margin-top:0}.network [hidden]{display:none!important}
+@media(max-width:480px){.network{margin:0 12px 20px;padding:15px}.network-top{display:block}.net-badge{display:inline-block;margin:4px 0 8px}.auth-row{display:block}.auth-row button{width:100%;margin-top:8px}}
+
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+
+<style id="campus-premium-layer">
+:root{--radius:26px;--accent:#635bff;--accent2:#22d3ee;--ink:#10162f;--mute:#68718b;--line:rgba(104,113,139,.22);--card:rgba(255,255,255,.78);--shadow:0 28px 80px -36px rgba(33,42,99,.35)}
+html[data-theme="midnight"]{--accent:#a78bfa;--accent2:#22d3ee;--ink:#f4f3ff;--mute:#b2b4d2;--line:rgba(180,180,255,.19);--card:rgba(16,18,45,.74)}
+body{background:radial-gradient(ellipse at 8% 0%,color-mix(in srgb,var(--h1c) 15%,transparent),transparent 42%),radial-gradient(ellipse at 95% 18%,color-mix(in srgb,var(--found) 12%,transparent),transparent 36%),var(--bg)}
+#bg3d{opacity:.40;filter:blur(1.25px) saturate(1.2)}
+.hero{padding-top:20px;padding-bottom:36px}.hero .wrap{position:relative}
+.eyebrow{padding:8px 12px;border:1px solid var(--card-border);border-radius:999px;background:var(--card);backdrop-filter:blur(14px);width:max-content;max-width:100%;font-size:.65rem;letter-spacing:.12em}
+h1{background:linear-gradient(110deg,var(--h1c),color-mix(in srgb,var(--found) 65%,var(--h1c)) 55%,var(--ret));-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:none;filter:drop-shadow(0 10px 22px color-mix(in srgb,var(--h1c) 16%,transparent))}
+.hero p{max-width:40ch}.cta button{position:relative;overflow:hidden;box-shadow:0 12px 26px rgba(0,0,0,.15),inset 0 1px rgba(255,255,255,.35)!important;transition:transform .22s,filter .22s,box-shadow .22s}.cta button:after{content:"";position:absolute;inset:0;transform:translateX(-120%);background:linear-gradient(110deg,transparent,rgba(255,255,255,.32),transparent);transition:transform .65s}.cta button:hover:after{transform:translateX(120%)}.cta button:hover{filter:saturate(1.15);box-shadow:0 18px 35px rgba(0,0,0,.18)!important}
+.scene{filter:drop-shadow(0 24px 28px rgba(49,46,129,.18))}.cube div{backface-visibility:visible;box-shadow:inset 0 1px 0 rgba(255,255,255,.45),inset 0 -12px 24px rgba(0,0,0,.1)}
+.network{position:relative;z-index:1;max-width:900px;margin:0 auto 30px;padding:22px 24px;border:1px solid var(--card-border);border-radius:26px;background:var(--card);backdrop-filter:blur(24px) saturate(150%);box-shadow:var(--shadow-sm)}
+.network-top{display:flex;align-items:flex-start;justify-content:space-between;gap:18px}.network-top h2{margin:0 0 7px}.network-top p{margin:0;color:var(--mute);font-size:.9rem;max-width:54ch}.net-badge{flex:none;font-size:.7rem;font-weight:800;padding:7px 10px;border-radius:999px;background:color-mix(in srgb,var(--h1c) 10%,transparent);color:var(--h1c)}
+#netSetup summary{padding:10px 0}#netSetup>button,#authPanel button{border:0;border-radius:12px;padding:11px 15px;background:var(--h1c);color:white;font-weight:800;cursor:pointer}#authPanel .auth-row{display:flex;gap:10px}#authPanel .auth-row button{flex:none}
+main{max-width:900px}.stats div{border:1px solid rgba(255,255,255,.2);box-shadow:0 18px 35px -18px rgba(15,23,42,.45);transition:transform .25s}.stats div:hover{transform:translateY(-4px)}
+.section-head{margin-top:12px}.section-head h2{letter-spacing:-.04em}.live-pill{box-shadow:0 8px 22px rgba(0,0,0,.05)}
+.filters{display:grid;grid-template-columns:1fr 1fr;gap:10px}.filters select{border-radius:14px;background-color:var(--field)}#q{border-radius:16px;padding:15px 18px;background-color:var(--card);backdrop-filter:blur(12px);box-shadow:0 8px 25px rgba(15,23,42,.04)}
+#chips button{border-radius:13px;border-color:var(--card-border);background:var(--card);transition:transform .2s,background .2s}#chips button:hover{transform:translateY(-2px)}#chips button[aria-pressed=true]{background:linear-gradient(135deg,var(--found),color-mix(in srgb,var(--found) 50%,var(--h1c)));border-color:transparent;color:white}
+.sc{border:1px solid var(--card-border);border-left-width:4px;box-shadow:0 15px 45px -32px rgba(15,23,42,.5);transition:transform .25s,box-shadow .25s,border-color .25s}.sc:hover{box-shadow:0 24px 50px -28px rgba(15,23,42,.6)}.sc.Lost{border-left-color:var(--lost)}.sc.Found{border-left-color:var(--found)}.sc.new{animation:cardIn .5s cubic-bezier(.2,.8,.2,1) both}@keyframes cardIn{from{opacity:0;transform:translateY(14px) scale(.985)}to{opacity:1;transform:translateY(0) scale(1)}}
+.hd{position:relative;padding-right:58px}.av{border-radius:18px;box-shadow:0 9px 22px rgba(0,0,0,.13)}.wh{white-space:normal;line-height:1.35}.stamp{font-size:.64rem;padding:5px 8px;border-width:1.5px}.bd{animation:reveal .2s ease-out}@keyframes reveal{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+.act button,details button{border-radius:12px;min-height:40px;padding:9px 13px}.act button[data-share]{background:color-mix(in srgb,var(--h1c) 9%,transparent);border-color:color-mix(in srgb,var(--h1c) 18%,transparent)}
+form{border-radius:30px;border-color:color-mix(in srgb,var(--h1c) 16%,var(--card-border));box-shadow:0 30px 80px -40px color-mix(in srgb,var(--h1c) 32%,transparent)}form h2{letter-spacing:-.04em}.sd{border:1px solid color-mix(in srgb,var(--h1c) 17%,transparent);background:color-mix(in srgb,var(--h1c) 4%,transparent)}form>button{background:linear-gradient(110deg,#fbbf24,#fb7185 55%,#a78bfa);color:#fff;box-shadow:0 7px 0 color-mix(in srgb,#a21caf 50%,#7c2d12),0 18px 34px rgba(225,29,72,.18)}
+input,select,textarea{transition:border-color .18s,box-shadow .18s,transform .18s}input:focus,select:focus,textarea:focus{box-shadow:0 0 0 4px color-mix(in srgb,var(--h1c) 13%,transparent);border-color:var(--h1c)}
+#ccTools{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:8px;margin:14px 0 8px;align-items:center}#ccTools .tool-label{font-size:.76rem;font-weight:800;color:var(--mute);padding-left:2px}#ccTools button,#ccTools select{min-height:42px;border:1px solid var(--card-border);border-radius:13px;padding:9px 12px;background:var(--card);color:var(--ink);font:700 .8rem var(--bd);cursor:pointer}#ccTools button.active{background:var(--h1c);color:white;border-color:var(--h1c)}#ccTools .tool-actions{display:flex;gap:7px;flex-wrap:wrap;justify-content:flex-end;grid-column:1/-1}#ccCount{font-size:.78rem;color:var(--mute);font-weight:700;padding:8px 2px}
+.cc-fav{position:absolute;right:14px;top:15px;width:36px;height:36px;border-radius:12px;border:1px solid var(--card-border);background:var(--card);color:var(--mute);font-size:1.15rem;cursor:pointer;z-index:2;transition:transform .2s,color .2s,background .2s}.cc-fav:hover{transform:scale(1.08)}.cc-fav.saved{background:#fff1f2;color:#e11d48;border-color:#fecdd3}.cc-fav.saved:before{content:"♥"}.cc-fav:not(.saved):before{content:"♡"}
+#ccGuide{margin:14px 0 28px;border:1px solid var(--card-border);border-radius:22px;background:var(--card);overflow:hidden}#ccGuide summary{padding:15px 18px;font-weight:800;color:var(--ink);list-style:none;display:flex;justify-content:space-between;align-items:center}#ccGuide summary:after{content:"＋";color:var(--h1c);font-size:1.1rem}#ccGuide[open] summary:after{content:"−"}#ccGuide .guide-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:0 14px 15px}.guide-step{padding:14px;border-radius:16px;background:var(--chip)}.guide-step b{display:block;font:800 .9rem var(--hd);margin:7px 0 3px}.guide-step span{font-size:.78rem;color:var(--mute);line-height:1.45;display:block}.guide-ico{font-size:1.4rem}
+#ccTop{position:fixed;right:20px;bottom:calc(86px + env(safe-area-inset-bottom,0));z-index:90;border:1px solid rgba(255,255,255,.3);border-radius:50%;width:44px;height:44px;background:var(--ink);color:var(--bg);font-size:1.15rem;box-shadow:0 12px 26px rgba(0,0,0,.2);opacity:0;pointer-events:none;transform:translateY(10px);transition:.2s}#ccTop.show{opacity:1;pointer-events:auto;transform:none}
+@media(min-width:760px){.hw{grid-template-columns:minmax(0,1fr) 180px}.scene{width:155px;height:155px}.network{padding:26px 30px}.filters{grid-template-columns:220px 220px}.stats{gap:18px}#ccTools{grid-template-columns:1fr auto auto}#ccTools .tool-actions{grid-column:auto}}
+@media(max-width:520px){.network{margin:0 14px 24px;padding:17px;border-radius:21px}.network-top{display:block}.net-badge{display:inline-block;margin-top:12px}.hero{padding-bottom:28px}.stats{gap:8px}.stats div{padding:16px 7px;border-radius:17px}.stats b{font-size:2rem}.section-head{align-items:flex-start;display:block}.live-pill{margin-bottom:10px}.filters{grid-template-columns:1fr 1fr}#ccTools{grid-template-columns:1fr 1fr}#ccTools .tool-label{grid-column:1/-1}#ccTools .tool-actions{grid-column:1/-1;justify-content:stretch}#ccTools .tool-actions button{flex:1}.hd{padding:15px 54px 15px 14px}.av{width:46px;height:46px;border-radius:14px}.who b{font-size:1rem}.stamp{font-size:.57rem;padding:4px 6px}.cc-fav{right:10px;top:12px;width:32px;height:32px}.guide-grid{grid-template-columns:1fr!important}#ccGuide .guide-grid{grid-template-columns:1fr}.guide-step{display:grid;grid-template-columns:30px 1fr;column-gap:8px}.guide-step .guide-ico{grid-row:span 2}.guide-step b{margin:0}.guide-step span{grid-column:2}}
+@media(prefers-reduced-motion:reduce){.sc.new,.bd{animation:none!important}}
+
+/* Student feedback section */
+#studentFeedback{max-width:900px;margin:28px auto;padding:22px;border:1px solid var(--card-border);border-radius:26px;background:var(--card);box-shadow:var(--shadow-sm);position:relative;z-index:2}
+#studentFeedback h2{margin:4px 0 8px;letter-spacing:-.03em}#studentFeedback .fb-intro{color:var(--mute);font-size:.92rem;line-height:1.55}
+#studentFeedback label{display:block;margin:12px 0 6px;font-weight:750;font-size:.88rem}#studentFeedback input,#studentFeedback select,#studentFeedback textarea{width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:13px;background:var(--field);color:var(--ink);font:inherit}
+#studentFeedback .fb-rating{display:flex;gap:8px;flex-wrap:wrap}#studentFeedback .fb-rating label{margin:0;flex:1;min-width:45px;position:relative}#studentFeedback .fb-rating input{position:absolute;left:0;top:0;width:1px;height:1px;opacity:0;pointer-events:none}#studentFeedback .fb-rating span{display:block;text-align:center;padding:11px;border:1px solid var(--line);border-radius:12px;background:var(--chip);cursor:pointer;font-weight:800}#studentFeedback .fb-rating input:checked+span{background:var(--h1c);color:white;border-color:var(--h1c)}
+#studentFeedback .fb-submit{width:100%;margin-top:15px;padding:13px 16px;border:0;border-radius:13px;background:var(--h1c);color:white;font:800 .95rem var(--bd);cursor:pointer}#studentFeedback .fb-note{font-size:.78rem;color:var(--mute);line-height:1.5}#studentFeedback .fb-admin{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}#studentFeedback .fb-admin button{border:1px solid var(--line);border-radius:11px;padding:9px 12px;background:var(--chip);color:var(--ink);font-weight:750;cursor:pointer}#fbStatus{font-weight:750;font-size:.9rem;margin-top:10px}
+@media(max-width:520px){#studentFeedback{margin:22px 14px;padding:17px;border-radius:21px}}
+
+</style>
+
+</head>
+<body>
+<noscript><p style="background:#fde047;color:#0f172a;padding:14px;font-weight:bold">This page is not displaying correctly. Please open it in Chrome.</p></noscript>
+<canvas id="bg3d" aria-hidden="true"></canvas>
+<div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="themes" role="group" aria-label="Colour theme">
+      <span>THEME</span>
+      <button type="button" data-t="ocean" aria-label="Ocean" style="background:linear-gradient(135deg,#1d4ed8,#38bdf8)"></button>
+      <button type="button" data-t="sunset" aria-label="Sunset" style="background:linear-gradient(135deg,#ea580c,#e11d48)"></button>
+      <button type="button" data-t="forest" aria-label="Forest" style="background:linear-gradient(135deg,#059669,#0ea5e9)"></button>
+      <button type="button" data-t="midnight" aria-label="Midnight" style="background:linear-gradient(135deg,#0f0f2a,#a78bfa)"></button>
+    </div>
+    <div class="hw">
+      <div>
+        <div class="eyebrow"><span class="live-dot"></span> SMVDU CAMPUS • COMMUNITY CARE</div>
+        <h1>Lost something?<br>Found something?</h1>
+        <p>Your campus Lost &amp; Found board. One small post can make someone’s day.</p>
+        <div class="cta">
+          <button type="button" data-go="Lost">I lost something</button>
+          <button type="button" data-go="Found">I found something</button>
+        </div>
+      </div>
+      <div>
+        <div class="scene" aria-hidden="true">
+          <div class="cube">
+            <div class="a">LOST</div><div class="b">FOUND</div><div class="c">CAMPUS</div>
+            <div class="d">SMVDU</div><div class="e">CLAIM</div><div class="f">RETURN</div>
+          </div>
+        </div>
+        <div class="hint">Rotate the cube ↻</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<section class="network wrap" aria-label="Campus board connection">
+  <div class="network-top"><div><span class="section-kicker">STUDENT COMMUNITY</span><h2>Campus board</h2><p id="netMessage">Connect the campus database to let students see each other’s posts.</p></div><span class="net-badge" id="netBadge">Setup needed</span></div>
+  <details id="netSetup"><summary>Connect shared campus board</summary>
+    <p class="note">Enter your Supabase Project URL and anon/public key here. These keys are safe only when database RLS policies are enabled. Never enter your service-role key.</p>
+    <label for="sbUrl">Supabase Project URL</label><input id="sbUrl" type="url" placeholder="https://your-project.supabase.co" autocomplete="url">
+    <label for="sbKey">Supabase anon / publishable key</label><input id="sbKey" type="password" placeholder="eyJ... or sb_publishable_..." autocomplete="off">
+    <button type="button" id="connectBtn">Connect database</button>
+    <p class="note">First, run the included SQL setup file in Supabase → SQL Editor.</p>
+  </details>
+  <div id="authPanel" hidden>
+    <label for="campusEmail">SMVDU student email</label>
+    <div class="auth-row"><input id="campusEmail" type="email" placeholder="you@smvdu.ac.in" autocomplete="email"><button type="button" id="loginBtn">Email login link</button></div>
+    <p class="note" id="authMsg">A sign-in link will be sent to your campus email. Shared posts will load after you sign in.</p>
+    <button type="button" id="refreshBtn" hidden>Refresh posts</button> <button type="button" id="logoutBtn" hidden>Sign out</button>
+  </div>
+</section>
+
+<main>
+  <div class="stats">
+    <div><b id="sl">0</b>Lost</div>
+    <div><b id="sf">0</b>Found</div>
+    <div><b id="sr">0</b>Returned</div>
+  </div>
+
+  <div class="section-head"><div><span class="section-kicker">COMMUNITY BOARD</span><h2 id="items">Recent items</h2></div><span class="live-pill" id="networkStatus"><span class="live-dot"></span> Campus board not connected</span></div>
+  <div class="filters">
+    <select id="ft" aria-label="Filter by type"><option value="">All types</option><option>Lost</option><option>Found</option></select>
+    <select id="fs" aria-label="Filter by status"><option value="open">Open</option><option value="done">Returned</option><option value="">All</option></select>
+  </div>
+  <input id="q" type="search" placeholder="Search name, colour, place..." aria-label="Search">
+  <div id="chips" class="chips" role="group" aria-label="Category">
+    <button type="button" data-c="" aria-pressed="true">All</button>
+    <button type="button" data-c="ID card" aria-pressed="false">ID card</button>
+    <button type="button" data-c="Bottle" aria-pressed="false">Bottle</button>
+    <button type="button" data-c="Charger" aria-pressed="false">Charger</button>
+    <button type="button" data-c="Books" aria-pressed="false">Books</button>
+    <button type="button" data-c="Bag" aria-pressed="false">Bag</button>
+    <button type="button" data-c="Other" aria-pressed="false">Other</button>
+  </div>
+  <div id="list"></div>
+
+  <span class="section-kicker">GOOD KARMA CORNER</span><h2>Campus Heroes</h2>
+  <p class="sub2">Earn 10 points when you return someone’s belongings.</p>
+  <div id="heroes"></div>
+
+  <button type="button" id="s3b" class="s3b" aria-label="3D settings" aria-expanded="false" aria-controls="s3p">3D</button>
+  <div id="s3p" class="s3p" hidden>
+    <h4>3D settings</h4>
+    <label class="chk"><input type="checkbox" id="s3on" checked> Enable 3D background</label>
+    <label for="s3sp">Speed</label>
+    <select id="s3sp"><option value="0.5">Slow</option><option value="1" selected>Normal</option><option value="1.8">Fast</option></select>
+    <label for="s3n">Number of objects</label>
+    <select id="s3n"><option value="5">Few</option><option value="10" selected>Normal</option><option value="20">More</option></select>
+    <label for="s3st">Style</label>
+    <select id="s3st"><option value="glossy">Glossy</option><option value="glass">Glass</option><option value="neon">Neon</option><option value="holo">Holographic</option><option value="soft">Soft pastel</option></select>
+    <label for="s3blur">Background blur</label>
+    <select id="s3blur"><option value="0">Sharp</option><option value="1" selected>Slight blur</option><option value="2">More blur</option></select>
+    <label class="chk"><input type="checkbox" id="s3sk" checked> Sparkles</label>
+    <p class="note">Tap the 3D objects to make them spin. Change the style and blur settings here.</p>
+  </div>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <form id="f">
+    <span class="section-kicker">HELP THE COMMUNITY</span><h2>Post a new item</h2>
+    <p class="form-intro">Add the details below. Your post may help someone get their lost item back.</p>
+    <p class="note privacy-note">🔒 Privacy first: student profile details are saved locally on this device and are not shared on the public board. Do not include your phone number, room number, entry number, or ID-card photo in the public description. Share only what is necessary.</p>
+    <div class="sd">
+      <h3>Your details <small>(private contact details will not be shared publicly)</small></h3>
+      <label for="sname">Student name</label>
+      <input id="sname" required maxlength="50" autocomplete="name" placeholder="Full name">
+      <div class="row">
+        <div><label for="entry">Entry no.</label><input id="entry" required maxlength="20" placeholder="Entry number"></div>
+        <div><label for="year">Year</label><select id="year"><option>1st year</option><option>2nd year</option><option>3rd year</option><option>4th year</option><option>5th year</option></select></div>
+      </div>
+      <div class="row">
+        <div><label for="course">Course / programme</label><select id="course"><option>B.Tech</option><option>M.Tech</option><option>MBA</option><option>M.Sc</option><option>B.Sc</option><option>PhD</option><option>Other</option></select></div>
+        <div><label for="branch">Branch / specialization</label><input id="branch" required maxlength="40" placeholder="e.g. CSE"></div>
+      </div>
+      <div class="row">
+        <div><label for="department">School / department (optional)</label><input id="department" maxlength="60" placeholder="e.g. School of CSE"></div>
+        <div><label for="semester">Current semester</label><select id="semester"><option value="">Choose semester</option><option>1st semester</option><option>2nd semester</option><option>3rd semester</option><option>4th semester</option><option>5th semester</option><option>6th semester</option><option>7th semester</option><option>8th semester</option><option>9th semester</option><option>10th semester</option><option>Research / coursework</option></select></div>
+      </div>
+      <div class="row">
+        <div><label for="residence">Campus residence</label><select id="residence"><option>Hosteller</option><option>Day scholar</option><option>Off-campus</option></select></div>
+        <div><label for="hostel">Hostel / residence name</label><input id="hostel" maxlength="40" placeholder="Optional — hostel name"></div>
+      </div>
+      <div class="row">
+        <div><label for="room">Room no. (optional)</label><input id="room" maxlength="10" placeholder="Keep this private unless necessary"></div>
+        <div><label for="contactPref">Preferred contact</label><select id="contactPref"><option>SMVDU email</option><option>Phone call</option><option>WhatsApp</option><option>Campus security desk</option></select></div>
+      </div>
+      <div class="row">
+        <div><label for="mobile">Mobile</label><input id="mobile" required type="tel" inputmode="numeric" pattern="[0-9]{10}" maxlength="10" placeholder="10-digit mobile number"></div>
+        <div><label for="wa">WhatsApp (optional)</label><input id="wa" type="tel" inputmode="numeric" pattern="[0-9]{10}" maxlength="10" placeholder="If different"></div>
+      </div>
+      <label for="email">SMVDU email</label>
+      <input id="email" required type="email" maxlength="80" placeholder="name@smvdu.ac.in">
+      <label for="avail">When are you available? (optional)</label>
+      <input id="avail" maxlength="50" placeholder="e.g. 5–7 PM">
+    </div>
+
+    <h3>Item details</h3>
+    <div class="type">
+      <label><input type="radio" name="type" value="Lost" checked><span>I lost something</span></label>
+      <label><input type="radio" name="type" value="Found"><span>I found something</span></label>
+    </div>
+    <label for="name">Item name</label>
+    <input id="name" required maxlength="60" placeholder="e.g. Blue water bottle">
+    <div class="row">
+      <div><label for="cat">Category</label>
+        <select id="cat"><option>ID card</option><option>Bottle</option><option>Charger</option><option>Books</option><option>Bag</option><option>Other</option></select></div>
+      <div><label for="color">Colour</label><input id="color" maxlength="20" placeholder="e.g. Blue"></div>
+    </div>
+    <div class="row">
+      <div><label for="place">Where</label>
+        <select id="place"><option>Library</option><option>Canteen</option><option>Hostel</option><option>Class block</option><option>Ground</option><option>Other</option></select></div>
+      <div><label for="date">Date</label><input id="date" type="date" required></div>
+    </div>
+    <label for="desc">Description</label>
+    <textarea id="desc" rows="3" maxlength="200" placeholder="Brand, size, or identifying marks. Do not enter ID numbers."></textarea>
+    <label id="plab">Photo / PDF (max 300 KB)</label>
+    <div class="pick" role="group" aria-labelledby="plab">
+      <button type="button" data-pick="pCam">Camera</button>
+      <button type="button" data-pick="pGal">Gallery</button>
+      <button type="button" data-pick="pFile">Files</button>
+      <button type="button" id="pPaste">Paste</button>
+    </div>
+    <input id="pCam" type="file" accept="image/*" capture="environment" hidden>
+    <input id="pGal" type="file" accept="image/*" hidden>
+    <input id="pFile" type="file" accept="image/*,application/pdf,.pdf" hidden>
+    <div id="pDrop" tabindex="0" role="button" aria-label="Drop or paste a photo here">Or drag &amp; drop a photo / PDF here, or paste it (Ctrl+V)</div>
+    <div id="pv"><img id="pvi" alt="Preview"><span id="pvt"></span><button type="button" id="pRemove" class="rm-photo">✕ Remove photo</button></div>
+    <p class="note">Hide the name and number before uploading an ID-card photo. The photo stays hidden from the public list.</p>
+    <div id="sec" hidden>
+      <label for="secret">Secret identifying detail (known only to the real owner)</label>
+      <input id="secret" maxlength="60" placeholder="e.g. sticker on the back">
+      <label class="chk"><input type="checkbox" id="handover"> Handed in to the security desk / office</label>
+      <p class="note">Mobile, email, hostel, room tab tak hidden jab tak secret sahi na ho.</p>
+    </div>
+    <button type="submit">Post item →</button>
+  </form>
+</main>
+
+
+<section id="studentFeedback" aria-labelledby="fbTitle">
+  <span class="section-kicker">YOUR VOICE MATTERS</span>
+  <h2 id="fbTitle">Student Feedback</h2>
+  <p class="fb-intro">Tell us what is working well and what we should improve on Campus Lost &amp; Found.</p>
+  <form id="feedbackForm">
+    <label for="fbName">Name (optional)</label>
+    <input id="fbName" maxlength="60" autocomplete="name" placeholder="You can leave this blank">
+    <label for="fbCourse">Class / year (optional)</label>
+    <input id="fbCourse" maxlength="60" placeholder="e.g. B.Tech CSE, 1st year">
+    <label>How useful is this website?</label>
+    <div class="fb-rating" role="radiogroup" aria-label="Website rating">
+      <label><input type="radio" name="fbRating" value="1" required><span>1 ★</span></label>
+      <label><input type="radio" name="fbRating" value="2"><span>2 ★</span></label>
+      <label><input type="radio" name="fbRating" value="3"><span>3 ★</span></label>
+      <label><input type="radio" name="fbRating" value="4"><span>4 ★</span></label>
+      <label><input type="radio" name="fbRating" value="5"><span>5 ★</span></label>
+    </div>
+    <label for="fbTopic">What is your feedback about?</label>
+    <select id="fbTopic"><option>Overall experience</option><option>Lost & Found posting</option><option>Website design</option><option>Mobile usability</option><option>New feature suggestion</option><option>Bug / problem</option></select>
+    <label for="fbMessage">Your feedback / suggestion</label>
+    <textarea id="fbMessage" rows="4" maxlength="1000" required placeholder="What should we improve? Please do not enter phone numbers, passwords or other private details."></textarea>
+    <button class="fb-submit" type="submit">Submit feedback →</button>
+    <p id="fbStatus" role="status" aria-live="polite"></p>
+  </form>
+  <p class="fb-note">Privacy note: this basic version saves feedback only in the browser on the device where it is submitted. It does not automatically send responses to the website owner. For feedback from the whole class to arrive in one place, connect a shared Google Form or database.</p>
+  <details>
+    <summary>Feedback admin (this device only)</summary>
+    <p class="fb-note">Only responses saved in this browser will appear here.</p>
+    <div class="fb-admin"><button type="button" id="fbExport">Download feedback CSV</button><button type="button" id="fbCountBtn">Show saved count</button></div>
+    <p id="fbAdminStatus" class="fb-note" role="status"></p>
+  </details>
+</section>
+
+<footer><strong>Campus Connect</strong> · SMVDU<br><span>Lost less. Help more. 💙</span><br><small>Connecting the campus board and student sign-in are required to share community posts.</small></footer>
+
+<script>
+var KEY="lf_items", items=[], unlocked={}, lastId=0, fcat="";
+try{ items=JSON.parse(localStorage.getItem(KEY))||[]; }catch(e){ items=[]; }
+var MAX=300*1024, pending=null, exp={};
+var PAL=["#ef476f","#f78c1f","#06a77d","#118ab2","#7b2cbf","#d62839"];
+function hashN(t){ var h=0,k; for(k=0;k<t.length;k++) h=(h*31+t.charCodeAt(k))>>>0; return h; }
+function ini(n){ var p=n.trim().split(/\s+/); return ((p[0]||"?")[0]+(p[1]?p[1][0]:"")).toUpperCase(); }
+function save(){ try{ localStorage.setItem(KEY,JSON.stringify(items)); return true; }catch(e){ return false; } }
+// Shared campus board: Supabase + Row Level Security. Only non-sensitive item details sync.
+var sb=null, sbUser=null, remoteIds={};
+function setNet(message,badge){ $("netMessage").textContent=message; $("netBadge").textContent=badge; }
+function publicItem(r){ return {id:r.id,type:r.type,status:r.status||"open",name:r.name||"Item",cat:r.cat||"Other",color:r.color||"",place:r.place||"Other",date:r.date||"",desc:r.description||"",sname:r.display_name||"Student",entry:"",branch:"",course:"",year:"",department:"",semester:"",residence:"",contactPref:"",room:"",wa:"",avail:"",handover:false,hostel:"",mobile:"",email:"",secret:"",pdf:"",size:0,thumb:"",remote:true,owner_id:r.user_id,created_at:r.created_at}; }
+function syncLocalAndRemote(rows){ var locals=items.filter(function(i){return !i.remote;}); var mapped=(rows||[]).map(publicItem); items=mapped.concat(locals); remoteIds={}; mapped.forEach(function(i){remoteIds[String(i.id)]=true;}); save(); render(); }
+async function loadShared(){ if(!sb) return; var q=await sb.from("campus_posts").select("id,user_id,type,status,name,cat,color,place,date,description,display_name,created_at").order("created_at",{ascending:false}).limit(100); if(q.error){setNet("Database connected, but check the table and policies: "+q.error.message,"Needs setup");return;} syncLocalAndRemote(q.data); setNet("Shared campus posts connected. Personal contact details are not included in the public feed.","Connected"); }
+async function connectBoard(){
+  var url=$("sbUrl").value.trim(), key=$("sbKey").value.trim();
+  if(!url||!key){toast("Enter both the Project URL and anon key.");return;}
+  if(!/^https:\/\/[a-z0-9-]+\.supabase\.co$/i.test(url)){toast("Please check the Supabase Project URL.");return;}
+  if(!window.supabase||!window.supabase.createClient){toast("The database library did not load. Please check your internet connection.");return;}
+  try{localStorage.setItem("cc_sb_url",url);localStorage.setItem("cc_sb_key",key);}catch(e){}
+  sb=window.supabase.createClient(url,key,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+  $("connectBtn").disabled=true; setNet("Checking database…","Connecting");
+  var session=await sb.auth.getSession(); if(session.error){setNet(session.error.message,"Error");$("connectBtn").disabled=false;return;}
+  sb.auth.onAuthStateChange(function(event,session){ sbUser=session&&session.user||null; updateAuth(); if(sbUser) loadShared(); });
+  sbUser=session.data.session&&session.data.session.user||null; $("authPanel").hidden=false; $("netSetup").open=false; $("connectBtn").disabled=false; updateAuth();
+  if(sbUser) await loadShared(); else {setNet("Database connected. Sign in with your SMVDU email to view or post shared items.","Sign-in needed");}
+}
+function updateAuth(){
+  $("logoutBtn").hidden=!sbUser; $("refreshBtn").hidden=!sbUser; $("loginBtn").hidden=!!sbUser; $("campusEmail").hidden=!!sbUser;
+  if(sbUser){ $("authMsg").textContent="Signed in: "+sbUser.email+". The shared board is active."; setNet("Student account connected · shared feed enabled","Connected"); }
+  else if(sb){ $("authMsg").textContent="Enter your SMVDU student email. A secure sign-in link will be sent to you."; }
+}
+async function loginCampus(){
+  if(!sb){toast("Connect the campus board first.");return;}
+  var email=$("campusEmail").value.trim().toLowerCase();
+  if(!/^[^@\s]+@smvdu\.ac\.in$/.test(email)){toast("Use your SMVDU email (@smvdu.ac.in).");return;}
+  var r=await sb.auth.signInWithOtp({email:email,options:{emailRedirectTo:location.href}});
+  $("authMsg").textContent=r.error?"Login error: "+r.error.message:"Sign-in link sent. Check your inbox or spam folder, then return to this page.";
+}
+try{var u0=localStorage.getItem("cc_sb_url"),k0=localStorage.getItem("cc_sb_key");if(u0&&k0){$("sbUrl").value=u0;$("sbKey").value=k0;}}catch(e){}
+$("connectBtn").addEventListener("click",connectBoard); $("loginBtn").addEventListener("click",loginCampus);
+$("refreshBtn").addEventListener("click",loadShared);
+window.setInterval(function(){if(sb&&sbUser) loadShared();},30000);
+$("logoutBtn").addEventListener("click",async function(){if(sb){await sb.auth.signOut();sbUser=null;items=items.filter(function(i){return !i.remote;});save();render();updateAuth();setNet("Signed out. Local posts are still on this device.","Signed out");}});
+
+function toB64(u){ var s="",i; for(i=0;i<u.length;i+=8192) s+=String.fromCharCode.apply(null,u.subarray(i,i+8192)); return btoa(s); }
+function fromB64(b){ var s=atob(b),u=new Uint8Array(s.length),i; for(i=0;i<s.length;i++) u[i]=s.charCodeAt(i); return u; }
+function kb(n){ return Math.round(n/1024)+" KB"; }
+function makePdf(jpg,w,h){
+  var enc=new TextEncoder(), parts=[], offs=[], len=0;
+  function add(x){ var b=typeof x==="string"?enc.encode(x):x; parts.push(b); len+=b.length; }
+  add("%PDF-1.4\n");
+  offs[1]=len; add("1 0 obj<</Type/Catalog/Pages 2 0 R>>endobj\n");
+  offs[2]=len; add("2 0 obj<</Type/Pages/Kids[3 0 R]/Count 1>>endobj\n");
+  offs[3]=len; add("3 0 obj<</Type/Page/Parent 2 0 R/MediaBox[0 0 "+w+" "+h+"]/Resources<</XObject<</Im0 4 0 R>>>>/Contents 5 0 R>>endobj\n");
+  offs[4]=len; add("4 0 obj<</Type/XObject/Subtype/Image/Width "+w+"/Height "+h+"/ColorSpace/DeviceRGB/BitsPerComponent 8/Filter/DCTDecode/Length "+jpg.length+">>stream\n"); add(jpg); add("\nendstream endobj\n");
+  var c="q "+w+" 0 0 "+h+" 0 0 cm /Im0 Do Q";
+  offs[5]=len; add("5 0 obj<</Length "+c.length+">>stream\n"+c+"\nendstream endobj\n");
+  var x=len; add("xref\n0 6\n0000000000 65535 f \n");
+  for(var i=1;i<=5;i++) add(("0000000000"+offs[i]).slice(-10)+" 00000 n \n");
+  add("trailer<</Size 6/Root 1 0 R>>\nstartxref\n"+x+"\n%%EOF");
+  var out=new Uint8Array(len),p=0; parts.forEach(function(b){ out.set(b,p); p+=b.length; }); return out;
+}
+function blobBytes(c,q){ return new Promise(function(res){ c.toBlob(function(b){ b.arrayBuffer().then(function(a){ res(new Uint8Array(a)); }); },"image/jpeg",q); }); }
+async function photoToPdf(file){
+  var url=URL.createObjectURL(file), img=new Image();
+  await new Promise(function(ok,no){ img.onload=ok; img.onerror=no; img.src=url; });
+  var dim=1000, q, c, w, h, jpg;
+  for(var round=0;round<8;round++){
+    var sc=Math.min(1,dim/Math.max(img.width,img.height)); w=Math.round(img.width*sc); h=Math.round(img.height*sc);
+    c=document.createElement("canvas"); c.width=w; c.height=h; var g=c.getContext("2d"); g.fillStyle="#fff"; g.fillRect(0,0,w,h); g.drawImage(img,0,0,w,h);
+    for(q=0.8;q>=0.4;q-=0.1){ jpg=await blobBytes(c,q); if(jpg.length+900<=MAX) break; }
+    if(jpg.length+900<=MAX) break; dim=Math.round(dim*0.75);
+  }
+  URL.revokeObjectURL(url);
+  if(jpg.length+900>MAX) throw new Error("big");
+  var t=document.createElement("canvas"), ts=160/Math.max(w,h); t.width=Math.round(w*ts); t.height=Math.round(h*ts);
+  t.getContext("2d").drawImage(c,0,0,t.width,t.height);
+  var pdf=makePdf(jpg,w,h);
+  return {pdf:toB64(pdf),size:pdf.length,thumb:t.toDataURL("image/jpeg",0.6)};
+}
+async function saveFile(name,bytes){
+  var dl=null; try{ dl=window.claude&&await window.claude.use("downloads"); }catch(e){}
+  if(dl){ try{ await dl.save({filename:name,data:bytes}); return; }catch(e){ if(e&&e.code==="declined") return; } }
+  var a=document.createElement("a"); a.href=URL.createObjectURL(new Blob([bytes],{type:"application/pdf"})); a.download=name;
+  document.body.appendChild(a); a.click(); a.remove();
+}
+function esc(s){ var d=document.createElement("div"); d.textContent=s==null?"":s; return d.innerHTML; }
+function $(id){ return document.getElementById(id); }
+function today(){ var d=new Date(); return new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,10); }
+$("date").value=today(); $("date").max=today();
+
+function typeNow(){ return document.querySelector('input[name=type]:checked').value; }
+function toggleSec(){ var f=typeNow()==="Found"; $("sec").hidden=!f; $("secret").required=f; }
+document.querySelectorAll('input[name=type]').forEach(function(r){ r.addEventListener("change",toggleSec); });
+
+function setNum(el,n){ var from=+el.textContent||0; if(from===n){ el.textContent=n; return; } var t0=performance.now();
+  (function f(t){ var p=Math.min(1,(t-t0)/500); el.textContent=Math.round(from+(n-from)*p); if(p<1) requestAnimationFrame(f); })(t0); }
+function matchesFor(i){ return items.filter(function(o){ return o.id!==i.id&&o.type!==i.type&&o.status!=="done"&&o.cat===i.cat&&
+  ((o.color&&i.color&&o.color.toLowerCase()===i.color.toLowerCase())||o.place===i.place); }); }
+function ago(d){ if(!d) return ""; var t=new Date(), a=new Date(t.getFullYear(),t.getMonth(),t.getDate()), p=d.split("-"), b=new Date(+p[0],+p[1]-1,+p[2]), n=Math.round((a-b)/864e5); return n<=0?"Today":n===1?"Yesterday":n+" days ago"; }
+function toast(m){ var t=$("toast"); t.textContent=m; t.classList.add("show"); clearTimeout(toast.h); toast.h=setTimeout(function(){ t.classList.remove("show"); },2600); }
+function confetti(){
+  if(navigator.vibrate) navigator.vibrate([40,30,40]);
+  if(matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  var c=document.createElement("canvas"); c.style.cssText="position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:99";
+  c.width=innerWidth; c.height=innerHeight; document.body.appendChild(c);
+  var g=c.getContext("2d"), cols=["#ff5d73","#ffd23f","#2ee6d6","#a78bfa","#34d399","#60a5fa"], ps=[], k;
+  for(k=0;k<110;k++) ps.push({x:c.width/2,y:c.height*.6,vx:(Math.random()-.5)*14,vy:-Math.random()*16-4,s:5+Math.random()*6,r:Math.random()*6,vr:(Math.random()-.5)*.4,c:cols[k%6]});
+  var t0=performance.now();
+  (function f(t){ g.clearRect(0,0,c.width,c.height);
+    ps.forEach(function(p){ p.vy+=.45; p.x+=p.vx; p.y+=p.vy; p.r+=p.vr; g.save(); g.translate(p.x,p.y); g.rotate(p.r); g.fillStyle=p.c; g.fillRect(-p.s/2,-p.s/2,p.s,p.s*.6); g.restore(); });
+    if(t-t0<2200) requestAnimationFrame(f); else c.remove(); })(t0);
+}
+function renderHeroes(){
+  var m={}; items.forEach(function(i){ if(i.type==="Found"&&i.status==="done"&&i.sname){ var k=i.entry||i.sname; m[k]=m[k]||{n:i.sname,p:0}; m[k].p+=10; } });
+  var a=Object.keys(m).map(function(k){return m[k];}).sort(function(x,y){return y.p-x.p;}).slice(0,3);
+  if(!a.length){ $("heroes").innerHTML='<div class="empty">No heroes yet. Return someone’s belongings to earn a place on the leaderboard!</div>'; return; }
+  var ord=[1,0,2].filter(function(x){return a[x];});
+  $("heroes").innerHTML='<div class="pod">'+ord.map(function(x){ var h=a[x];
+    return '<div class="g'+(x+1)+'"><div class="nm">'+esc(h.n)+'</div><div class="pt">'+h.p+' points</div><div class="bl">'+(x+1)+'</div></div>'; }).join("")+'</div>';
+}
+function shareItem(id){
+  var i=items.filter(function(x){return String(x.id)===id;})[0]; if(!i) return;
+  var t=(i.type==="Lost"?"Lost item: ":"Found item: ")+i.name+" ("+i.cat+(i.color?", "+i.color:"")+", "+i.place+"). View it on Campus Connect: "+location.href;
+  if(navigator.share){ navigator.share({text:t}).catch(function(){}); }
+  else window.open("https://wa.me/?text="+encodeURIComponent(t),"_blank");
+}
+function render(){
+  var t=$("ft").value, s=$("fs").value, q=$("q").value.toLowerCase();
+  setNum($("sl"),items.filter(function(i){return i.type==="Lost"&&i.status!=="done";}).length);
+  setNum($("sf"),items.filter(function(i){return i.type==="Found"&&i.status!=="done";}).length);
+  setNum($("sr"),items.filter(function(i){return i.status==="done";}).length);
+  renderHeroes();
+  var shown=items.filter(function(i){
+    var st=i.status||"open";
+    return (!t||i.type===t)&&(!fcat||i.cat===fcat)&&(!s||st===s)&&(!q||(i.name+" "+i.sname+" "+i.entry+" "+i.cat+" "+i.color+" "+i.place+" "+i.desc).toLowerCase().indexOf(q)>-1);
+  });
+  if(!shown.length){ $("list").innerHTML='<div class="empty">'+(items.length?'No matching items found.<br>Try changing your search or filters.':'No items yet.<br>Use the form below to post the first item.')+'</div>'; return; }
+  $("list").innerHTML=shown.map(function(i){
+    var done=i.status==="done", open=!!exp[i.id], nm=i.sname||"Student";
+    var what=(i.type==="Lost"?"Khoya: ":"Mila: ")+i.name;
+    var h='<div class="sc '+i.type+(done?' done':'')+(i.id===lastId?' new':'')+'"><div class="hd" role="button" tabindex="0" aria-expanded="'+open+'" data-card="'+i.id+'">'
+      +'<span class="av" style="background:'+PAL[hashN(nm)%PAL.length]+'">'+esc(ini(nm))+'</span>'
+      +'<span class="who"><b>'+esc(nm)+'</b><span class="en">'+(i.entry?'Entry '+esc(i.entry):'')+(i.date?' · '+ago(i.date):'')+(i.handover?' · Security desk':'')+'</span><span class="wh">'+esc(what)+'</span></span>'
+      +'<span class="stamp">'+(done?'Returned':i.type)+'</span></div>';
+    if(!open) return h+'</div>';
+    var show=i.type==="Lost"||unlocked[i.id];
+    var d=[["Course",[i.course,i.year].filter(Boolean).join(", ")],["Branch / specialization",i.branch],["School / department",i.department],["Semester",i.semester]];
+    if(show){ d.push(["Residence",i.residence],["Hostel / residence",[i.hostel,i.room&&("Room "+i.room)].filter(Boolean).join(", ")],["Preferred contact",i.contactPref],["Mobile",i.mobile||i.contact],["WhatsApp",i.wa],["Email",i.email],["Available",i.avail]); }
+    if(i.handover) d.push(["Handover","Security desk / office"]);
+    d.push(["Item",i.name],["Category",i.cat],["Colour",i.color],["Place",i.place],["Date",i.date]);
+    var dl='<dl class="dl">'+d.filter(function(x){return x[1];}).map(function(x){return '<dt>'+x[0]+'</dt><dd>'+esc(x[1])+'</dd>';}).join("")+'</dl>';
+    var desc=i.cat==="ID card"?'<div class="hid">Details hidden for privacy (ID card)</div>':(i.desc?'<div>'+esc(i.desc)+'</div>':'');
+    var pdfb="";
+    if(i.pdf){ pdfb=i.cat==="ID card"&&!unlocked[i.id]?'<div class="hid">Photo hidden for privacy</div>'
+      :'<div class="pdfrow"><img class="th" src="'+i.thumb+'" alt=""><span>PDF · '+kb(i.size)+'</span><button type="button" data-pdf="'+i.id+'">Download</button></div>'; }
+    var mt="", ms=done?[]:matchesFor(i);
+    if(ms.length) mt='<div class="match"><b>Possible match:</b><br>'+ms.slice(0,3).map(function(o){ return esc(o.sname||"Student")+": "+esc(o.name)+" ("+esc(o.place)+")"; }).join("<br>")+'</div>';
+    var ver="";
+    if(!show&&!done&&!i.remote) ver='<details open><summary>This is mine</summary><input id="v'+i.id+'" placeholder="What is the secret identifying detail?" aria-label="Secret mark">'
+      +'<button type="button" data-verify="'+i.id+'">Verify</button><div class="err" id="e'+i.id+'"></div></details>';
+    var owner=!i.remote||!!(sbUser&&i.owner_id===sbUser.id);
+    return h+'<div class="bd">'+dl+desc+pdfb+mt+ver+'<div class="act">'+(done?'':'<button type="button" data-share="'+i.id+'">Share post</button>'+(owner?'<button type="button" data-done="'+i.id+'">Mark returned</button>':''))
+      +(owner&&i.pdf?'<button type="button" data-rmphoto="'+i.id+'">Remove photo</button>':'')
+      +(owner?'<button type="button" data-del="'+i.id+'">Delete post</button>':'')+'</div>'+(i.remote?'<p class="note">Shared campus post · contact through a safe campus channel; do not post private details here.</p>':'')+'</div></div>';
+  }).join("");
+}
+
+$("f").addEventListener("submit",async function(e){
+  e.preventDefault();
+  if(sb && !sbUser){toast("Sign in with your student email before creating a shared post.");$("authPanel").scrollIntoView({behavior:"smooth"});return;}
+  var newItem={
+    id:Date.now(), type:typeNow(), status:"open",
+    name:$("name").value.trim(), cat:$("cat").value, color:$("color").value.trim(),
+    place:$("place").value, date:$("date").value, desc:$("desc").value.trim(),
+    sname:$("sname").value.trim(), entry:$("entry").value.trim(), branch:$("branch").value.trim(), course:$("course").value, year:$("year").value, department:$("department").value.trim(), semester:$("semester").value, residence:$("residence").value, contactPref:$("contactPref").value, room:$("room").value.trim(), wa:$("wa").value.trim(), avail:$("avail").value.trim(),
+    handover:$("handover").checked, hostel:$("hostel").value.trim(), mobile:$("mobile").value.trim(), email:$("email").value.trim(), secret:$("secret").value.trim(),
+    pdf:pending?pending.pdf:"", size:pending?pending.size:0, thumb:pending?pending.thumb:""
+  };
+  pending=null; $("pv").style.display="none";
+  if(sb && sbUser){
+    var payload={user_id:sbUser.id,type:newItem.type,status:"open",name:newItem.name,cat:newItem.cat,color:newItem.color,place:newItem.place,date:newItem.date,description:newItem.cat==="ID card"?"ID card details hidden for privacy":newItem.desc,display_name:newItem.sname};
+    var result=await sb.from("campus_posts").insert(payload).select("id,user_id,type,status,name,cat,color,place,date,description,display_name,created_at").single();
+    if(result.error){toast("Post failed: "+result.error.message);return;}
+    var ri=publicItem(result.data); items.unshift(ri); remoteIds[String(ri.id)]=true; save(); lastId=ri.id; exp[lastId]=false; render();
+    e.target.reset(); $("date").value=today(); toggleSec(); toast("Your post has been shared on the campus board!");
+  } else {
+    items.unshift(newItem); lastId=items[0].id; exp[lastId]=false; if(!save()){ items.shift(); lastId=0; alert("Storage is full. Remove older items and try again."); return; } e.target.reset(); $("date").value=today(); toggleSec(); render(); var mc=matchesFor(items[0]).length; toast(mc?"Posted! "+mc+" possible matches found.":"Item saved on this device.");
+  }
+  if(navigator.vibrate) navigator.vibrate(30);
+});
+$("list").addEventListener("click",async function(e){
+  var b=e.target, id, hd=b.closest("[data-card]");
+  if(hd){ var k=hd.getAttribute("data-card"); exp[k]=!exp[k]; render(); return; }
+  if(id=b.getAttribute("data-rmphoto")){ if(!confirm("Remove the photo from this post?")) return; items.forEach(function(i){ if(String(i.id)===id){ i.pdf=""; i.size=0; i.thumb=""; } }); save(); render(); toast("Photo removed from the post."); }
+  else if(id=b.getAttribute("data-del")){ if(!confirm("Delete this post permanently?")) return; var del=items.filter(function(i){return String(i.id)===id;})[0]; if(del&&del.remote){ if(!sb||!sbUser||del.owner_id!==sbUser.id){toast("You can only delete your own posts.");return;} var dr=await sb.from("campus_posts").delete().eq("id",id); if(dr.error){toast("Could not delete: "+dr.error.message);return;} } items=items.filter(function(i){return String(i.id)!==id;}); save(); render(); }
+  else if(id=b.getAttribute("data-pdf")){ var p=items.filter(function(i){return String(i.id)===id;})[0]; if(p) saveFile("lost-found-"+p.id+".pdf",fromB64(p.pdf)); }
+  else if(id=b.getAttribute("data-share")){ shareItem(id); }
+  else if(id=b.getAttribute("data-done")){ var target=items.filter(function(i){return String(i.id)===id;})[0]; if(target&&target.remote){if(!sb||!sbUser||target.owner_id!==sbUser.id){toast("You can only update your own posts.");return;} var ur=await sb.from("campus_posts").update({status:"done"}).eq("id",id); if(ur.error){toast("Update failed: "+ur.error.message);return;}} items.forEach(function(i){ if(String(i.id)===id) i.status="done"; }); save(); render(); confetti(); toast("Great! The item has been returned."); }
+  else if(id=b.getAttribute("data-verify")){
+    var it=items.filter(function(i){return String(i.id)===id;})[0], v=$("v"+id).value.trim().toLowerCase();
+    if(it&&v&&v===(it.secret||"").toLowerCase()){ unlocked[id]=true; render(); }
+    else $("e"+id).textContent="Incorrect. Try again or ask campus security for help.";
+  }
+});
+$("list").addEventListener("keydown",function(e){
+  var hd=e.target.closest&&e.target.closest("[data-card]");
+  if(hd&&e.target===hd&&(e.key==="Enter"||e.key===" ")){ e.preventDefault(); var k=hd.getAttribute("data-card"); exp[k]=!exp[k]; render(); }
+});
+document.querySelectorAll("#chips button").forEach(function(b){ b.addEventListener("click",function(){
+  fcat=b.getAttribute("data-c"); document.querySelectorAll("#chips button").forEach(function(x){ x.setAttribute("aria-pressed",x===b); }); render(); }); });
+["ft","fs"].forEach(function(x){ $(x).addEventListener("change",render); });
+$("q").addEventListener("input",render);
+function pdfThumb(){ var c=document.createElement("canvas"); c.width=c.height=160; var g=c.getContext("2d");
+  g.fillStyle="#e11d48"; g.fillRect(0,0,160,160); g.fillStyle="#fff"; g.font="bold 48px sans-serif"; g.textAlign="center"; g.fillText("PDF",80,95); return c.toDataURL("image/jpeg",0.7); }
+function clearPhoto(){
+  pending=null; ["pCam","pGal","pFile"].forEach(function(id){ $(id).value=""; });
+  $("pv").style.display="none"; $("pvi").removeAttribute("src"); $("pvt").textContent="";
+}
+$("pRemove").addEventListener("click",function(){ clearPhoto(); toast("Photo removed."); });
+function takeFile(f){
+  if(!f) return;
+  if(!(/^image\//.test(f.type)||f.type==="application/pdf"||/\.pdf$/i.test(f.name))){ toast("Please choose a photo or a PDF."); return; }
+  handleFile(f,null);
+}
+$("pPaste").addEventListener("click",async function(){
+  try{
+    var cl=await navigator.clipboard.read();
+    for(var a=0;a<cl.length;a++){ for(var t=0;t<cl[a].types.length;t++){ var ty=cl[a].types[t];
+      if(/^image\//.test(ty)||ty==="application/pdf"){ var bl=await cl[a].getType(ty); takeFile(new File([bl],ty==="application/pdf"?"pasted.pdf":"pasted.png",{type:ty})); return; } } }
+    toast("No photo found in the clipboard. Copy a photo first.");
+  }catch(e){ toast("Cannot read the clipboard here. Long-press and paste in the box below, or use Gallery."); $("pDrop").focus(); }
+});
+document.addEventListener("paste",function(e){
+  var fl=e.clipboardData&&e.clipboardData.files; if(fl&&fl.length){ takeFile(fl[0]); }
+});
+var dz=$("pDrop");
+dz.addEventListener("click",function(){ $("pGal").click(); });
+["dragenter","dragover"].forEach(function(n){ dz.addEventListener(n,function(e){ e.preventDefault(); dz.classList.add("over"); }); });
+["dragleave","drop"].forEach(function(n){ dz.addEventListener(n,function(e){ e.preventDefault(); dz.classList.remove("over"); }); });
+dz.addEventListener("drop",function(e){ var fl=e.dataTransfer&&e.dataTransfer.files; if(fl&&fl.length) takeFile(fl[0]); });
+function onPick(inp){ handleFile(inp.files[0],inp); }
+async function handleFile(f,inp){
+  pending=null; $("pv").style.display="none"; if(!f) return;
+  $("pv").style.display="flex"; $("pvi").removeAttribute("src"); $("pvt").textContent="Preparing PDF…";
+  try{
+    var r;
+    if(f.type==="application/pdf"||/\.pdf$/i.test(f.name)){
+      var u=new Uint8Array(await f.arrayBuffer());
+      if(u.length>MAX) throw new Error("big");
+      r={pdf:toB64(u),size:u.length,thumb:pdfThumb()};
+    } else r=await photoToPdf(f);
+    pending=r; $("pvi").src=r.thumb; $("pvt").textContent="Ready · "+kb(r.size);
+  }catch(e){ $("pvt").textContent="The file is larger than 300 KB. Please try a smaller photo or file."; if(inp) inp.value=""; pending=null; }
+}
+["pCam","pGal","pFile"].forEach(function(id){ $(id).addEventListener("change",function(){ onPick(this); }); });
+document.querySelectorAll("[data-pick]").forEach(function(b){ b.addEventListener("click",function(){ $(b.getAttribute("data-pick")).click(); }); });
+document.querySelectorAll("[data-go]").forEach(function(x){ x.addEventListener("click",function(){
+  document.querySelector('input[name=type][value='+x.getAttribute("data-go")+']').checked=true; toggleSec();
+  $("f").scrollIntoView(); $("name").focus({preventScroll:true}); }); });
+toggleSec(); render();
+
+(function(){
+  var reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var hero=document.querySelector(".hero"), cube=document.querySelector(".cube");
+  var rx=-22, ry=28, vx=0, vy=0, drag=false, lx=0, ly=0;
+  function draw(){
+    if(!drag){ vx*=.94; vy*=.94; ry+=vx+(reduce?0:.4); rx+=vy+(-22-rx)*.03; }
+    cube.style.transform="rotateX("+rx.toFixed(1)+"deg) rotateY("+ry.toFixed(1)+"deg)";
+    requestAnimationFrame(draw);
+  }
+  var scene=document.querySelector(".scene");
+  scene.addEventListener("pointerdown",function(e){ drag=true; lx=e.clientX; ly=e.clientY; vx=vy=0; scene.setPointerCapture&&scene.setPointerCapture(e.pointerId); });
+  scene.addEventListener("pointermove",function(e){
+    if(!drag) return;
+    var dx=e.clientX-lx, dy=e.clientY-ly; lx=e.clientX; ly=e.clientY;
+    ry+=dx*.7; rx-=dy*.7; vx=dx*.7; vy=-dy*.7;
+  });
+  ["pointerup","pointercancel","pointerleave"].forEach(function(n){ scene.addEventListener(n,function(){ drag=false; }); });
+  draw();
+  var tb=document.querySelectorAll("[data-t]");
+  function setTheme(n,keep){
+    document.documentElement.setAttribute("data-theme",n); if(window.lf3dColors) window.lf3dColors();
+    tb.forEach(function(b){ b.setAttribute("aria-pressed",b.getAttribute("data-t")===n); });
+    if(!keep){ try{ localStorage.setItem("lf_theme",n); }catch(e){} }
+  }
+  var t="ocean"; try{ t=localStorage.getItem("lf_theme")||"ocean"; }catch(e){}
+  setTheme(t,true);
+  tb.forEach(function(b){ b.addEventListener("click",function(){ setTheme(b.getAttribute("data-t")); }); });
+})();
+
+(function(){
+  var S={on:true,speed:1,count:10,style:"glossy",spark:true,blur:1};
+  try{ var sv=JSON.parse(localStorage.getItem("lf_3d")||"null"); if(sv) for(var k in sv) if(k in S) S[k]=sv[k]; }catch(e){}
+  function save(){ try{ localStorage.setItem("lf_3d",JSON.stringify(S)); }catch(e){} }
+  function $$(id){ return document.getElementById(id); }
+  var btn=$$("s3b"), pan=$$("s3p");
+  btn.addEventListener("click",function(){ var o=pan.hidden; pan.hidden=!o; btn.setAttribute("aria-expanded",o); });
+  function init(){
+    if(!window.THREE||matchMedia("(prefers-reduced-motion: reduce)").matches){ btn.hidden=true; return; }
+    var T=THREE, cv=$$("bg3d"), ren;
+    try{ ren=new T.WebGLRenderer({canvas:cv,alpha:true,antialias:true}); }catch(e){ btn.hidden=true; return; }
+    ren.setPixelRatio(Math.min(devicePixelRatio||1,1.75));
+    var sc=new T.Scene(), cam=new T.PerspectiveCamera(50,1,.1,100); cam.position.z=14;
+    sc.add(new T.HemisphereLight(0xffffff,0x8899ff,.8));
+    var l1=new T.PointLight(0xffffff,1.3,70); l1.position.set(8,10,10); sc.add(l1);
+    var l2=new T.PointLight(0xffffff,.8,70); l2.position.set(-10,-6,8); sc.add(l2);
+    try{
+      var pm=new T.PMREMGenerator(ren), c2=document.createElement("canvas"); c2.width=256; c2.height=128;
+      var g2=c2.getContext("2d"), gr=g2.createLinearGradient(0,0,0,128); gr.addColorStop(0,"#ffffff"); gr.addColorStop(.5,"#9ab4ff"); gr.addColorStop(1,"#ffe3b3");
+      g2.fillStyle=gr; g2.fillRect(0,0,256,128); g2.fillStyle="#fff"; g2.fillRect(30,18,56,12); g2.fillRect(160,32,44,10); g2.fillRect(110,70,60,8);
+      var tx=new T.CanvasTexture(c2); tx.mapping=T.EquirectangularReflectionMapping;
+      sc.environment=pm.fromEquirectangular(tx).texture; tx.dispose(); pm.dispose();
+    }catch(e){}
+    var mats=[], objs=[], cols=["#e11d48","#0d9488","#7c3aed","#1d4ed8"];
+    function mat(ci){ var m=new T.MeshStandardMaterial({metalness:.55,roughness:.22}); m.userData.ci=ci; mats.push(m); return m; }
+    function glass(){ return new T.MeshStandardMaterial({color:0xffffff,transparent:true,opacity:.3,metalness:.2,roughness:.05}); }
+    function magnifier(ci){ var g=new T.Group();
+      g.add(new T.Mesh(new T.TorusGeometry(1,.17,16,44),mat(ci)));
+      g.add(new T.Mesh(new T.CircleGeometry(.95,32),glass()));
+      var h=new T.Mesh(new T.CylinderGeometry(.15,.17,1.7,14),mat((ci+2)%4)); h.position.set(1.12,-1.12,0); h.rotation.z=Math.PI/4; g.add(h); return g; }
+    function pin(ci){ var g=new T.Group(), c=new T.Mesh(new T.ConeGeometry(.5,1.3,20),mat(ci)); c.rotation.z=Math.PI; c.position.y=-.2;
+      var b=new T.Mesh(new T.SphereGeometry(.55,24,18),mat(ci)); b.position.y=.65; g.add(c); g.add(b); return g; }
+    function M(geo,ci){ return new T.Mesh(geo,mat(ci)); }
+    var makers=[
+      function(c){return magnifier(c);},function(c){return pin(c);},function(c){return M(new T.IcosahedronGeometry(1,0),c);},
+      function(c){return M(new T.TorusKnotGeometry(.7,.22,90,14),c);},function(c){return M(new T.BoxGeometry(1.3,1.3,1.3),c);},
+      function(c){return M(new T.OctahedronGeometry(1.1),c);},function(c){return pin(c);},function(c){return magnifier(c);},
+      function(c){return M(new T.IcosahedronGeometry(1,0),c);},function(c){return M(new T.TorusKnotGeometry(.7,.22,90,14),c);},
+      function(c){return M(new T.TorusGeometry(.9,.32,16,40),c);},function(c){ var m=M(new T.CylinderGeometry(1,1,.22,36),c); m.rotation.x=1.2; return m; },
+      function(c){return M(new T.DodecahedronGeometry(1),c);},function(c){return M(new T.BoxGeometry(1.2,1.2,1.2),c);},
+      function(c){return pin(c);},function(c){return magnifier(c);},
+      function(c){return M(new T.SphereGeometry(.78,24,16),c);},
+      function(c){return M(new T.TorusKnotGeometry(.62,.16,110,16,2,5),c);},
+      function(c){return M(new T.OctahedronGeometry(1.2,1),c);},
+      function(c){var m=M(new T.TorusGeometry(.78,.12,14,48),c);m.rotation.x=.8;m.rotation.y=.5;return m;}
+    ];
+    makers.forEach(function(mk,i){ var o=mk(i%4); o.userData={sp:.25+Math.random()*.5,ph:Math.random()*6.28,kick:0,base:.9,ci:i%4}; o.position.z=-(i%3); o.scale.setScalar(.9); sc.add(o); objs.push(o); });
+    var N=140, pos=new Float32Array(N*3), j;
+    for(j=0;j<N;j++){ pos[j*3]=(Math.random()-.5)*14; pos[j*3+1]=3-Math.random()*19; pos[j*3+2]=-7+Math.random()*9; }
+    var pg=new T.BufferGeometry(); pg.setAttribute("position",new T.BufferAttribute(pos,3));
+    var pmat=new T.PointsMaterial({size:.12,transparent:true,opacity:.8,sizeAttenuation:true,depthWrite:false}), pts=new T.Points(pg,pmat); sc.add(pts);
+    var halfW=3, px=0, py=0, camY=0;
+    function layout(){ var n=S.count;
+      objs.forEach(function(o,i){ var u=o.userData; o.visible=i<n; u.by=3.2-i*(18/Math.max(1,n-1)); u.nx=(i%2?1:-1)*(.55+((i*37)%30)/100); u.bx=u.nx*halfW*.95; }); }
+    function resize(){ var w=innerWidth,h=innerHeight; ren.setSize(w,h,false); cam.aspect=w/h; cam.updateProjectionMatrix();
+      halfW=Math.tan(25*Math.PI/180)*14*cam.aspect; layout(); pts.scale.x=Math.max(.4,cam.aspect*1.6); }
+    function style(){
+      mats.forEach(function(m){ var st=S.style, col=cols[m.userData.ci]; m.color.set(col);
+        if(st==="glass"){ m.transparent=true; m.opacity=.55; m.metalness=.1; m.roughness=.05; m.emissive.set(0x000000); m.emissiveIntensity=0; }
+        else if(st==="neon"){ m.transparent=false; m.opacity=1; m.metalness=.2; m.roughness=.4; m.emissive.set(col); m.emissiveIntensity=.7; }
+        else if(st==="holo"){ m.transparent=false; m.opacity=1; m.metalness=.95; m.roughness=.08; m.emissive.set(col); m.emissiveIntensity=.28; }
+        else if(st==="soft"){ m.transparent=false; m.opacity=1; m.metalness=.12; m.roughness=.62; m.emissive.set(col); m.emissiveIntensity=.08; }
+        else { m.transparent=false; m.opacity=1; m.metalness=.55; m.roughness=.22; m.emissive.set(0x000000); m.emissiveIntensity=0; }
+        m.needsUpdate=true; });
+      pmat.color.set(cols[3]); pts.visible=!!S.spark; cv.style.display=S.on?"":"none"; cv.style.filter="blur("+S.blur+"px)"; cv.style.opacity=S.blur>=2?".36":".48"; }
+    function colors(){ var cs=getComputedStyle(document.documentElement);
+      cols=["--lost","--found","--ret","--h1c"].map(function(v){ return cs.getPropertyValue(v).trim(); }); style(); }
+    window.lf3dColors=colors;
+    $$("s3on").checked=S.on; $$("s3sp").value=String(S.speed); $$("s3n").value=String(S.count); $$("s3st").value=S.style; $$("s3blur").value=String(S.blur); $$("s3sk").checked=S.spark;
+    $$("s3on").addEventListener("change",function(){ S.on=this.checked; save(); style(); });
+    $$("s3sp").addEventListener("change",function(){ S.speed=+this.value; save(); });
+    $$("s3n").addEventListener("change",function(){ S.count=+this.value; save(); layout(); });
+    $$("s3st").addEventListener("change",function(){ S.style=this.value; save(); style(); });
+    $$("s3blur").addEventListener("change",function(){ S.blur=+this.value; save(); style(); });
+    $$("s3sk").addEventListener("change",function(){ S.spark=this.checked; save(); style(); });
+    colors(); resize();
+    addEventListener("resize",resize);
+    addEventListener("pointermove",function(e){ px=e.clientX/innerWidth-.5; py=e.clientY/innerHeight-.5; },{passive:true});
+    var ray=new T.Raycaster(), ndc=new T.Vector2();
+    addEventListener("pointerdown",function(e){
+      if(!S.on) return;
+      if(e.target.closest&&e.target.closest("button,input,select,textarea,a,summary,.sc,form,.s3p")) return;
+      ndc.x=e.clientX/innerWidth*2-1; ndc.y=-(e.clientY/innerHeight)*2+1; ray.setFromCamera(ndc,cam);
+      var hit=ray.intersectObjects(objs.filter(function(o){return o.visible;}),true)[0]; if(!hit) return;
+      var o=hit.object, n=0; while(o.parent&&o.parent!==sc&&n++<5) o=o.parent;
+      if(o.userData) o.userData.kick=1; if(navigator.vibrate) navigator.vibrate(15);
+    });
+    var t0=performance.now();
+    (function loop(now){
+      requestAnimationFrame(loop); if(!S.on||document.hidden) return;
+      var t=(now-t0)/1000, sp=S.speed, mx=Math.max(1,document.documentElement.scrollHeight-innerHeight), sy=Math.min(1,scrollY/mx);
+      camY+=((2.5-sy*15.5)-camY)*.08;
+      cam.position.y=camY; cam.position.x+=(px*2.2-cam.position.x)*.05; cam.lookAt(cam.position.x*.3,camY-py*1.2,0);
+      objs.forEach(function(o){ if(!o.visible) return; var u=o.userData;
+        o.rotation.y+=(.006+u.sp*.01)*sp+u.kick*.28; o.rotation.x+=.003*u.sp*sp;
+        o.position.x=u.bx+Math.sin(t*.4*sp+u.ph)*.3; o.position.y=u.by+Math.sin(t*u.sp*sp+u.ph)*.45;
+        o.scale.setScalar(u.base*(1+u.kick*.3)); u.kick*=.93; if(u.kick<.01) u.kick=0; });
+      pts.rotation.y=t*.02*sp; pmat.opacity=.55+.3*Math.sin(t*1.5);
+      ren.render(sc,cam);
+    })(t0);
+  }
+  addEventListener("load",init);
+})();
+</script>
+
+<script id="campus-premium-features">
+(function(){
+  var $=function(id){return document.getElementById(id)};
+  var FKEY='cc_saved_favorites_v1', favorites=[]; try{favorites=JSON.parse(localStorage.getItem(FKEY)||'[]')}catch(e){favorites=[]}
+  var onlySaved=false, sortMode='newest';
+  function saveFav(){try{localStorage.setItem(FKEY,JSON.stringify(favorites))}catch(e){}}
+  function toastMsg(t){if(typeof toast==='function')toast(t);else alert(t)}
+  function escCsv(v){return '"'+String(v==null?'':v).replace(/"/g,'""')+'"'}
+  function exportItems(){var arr=(items||[]).filter(function(i){return !i.remote||i.remote;});if(!arr.length){toastMsg('There are no posts to export yet.');return}
+    var rows=[['Type','Status','Item','Category','Colour','Place','Date','Description','Posted by']];arr.forEach(function(i){rows.push([i.type,i.status==='done'?'Returned':'Open',i.name,i.cat,i.color,i.place,i.date,i.desc,i.sname])});
+    var blob=new Blob(['\ufeff'+rows.map(function(r){return r.map(escCsv).join(',')}).join('\r\n')],{type:'text/csv;charset=utf-8;'}),u=URL.createObjectURL(blob),a=document.createElement('a');a.href=u;a.download='campus-connect-items.csv';document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(u)},1000);toastMsg('The item list CSV has been downloaded.');}
+  function shareBoard(){var data={title:'Campus Connect · SMVDU Lost & Found',text:'Open Campus Connect to view and report lost or found items on campus.',url:location.href};if(navigator.share)navigator.share(data).catch(function(){});else if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(location.href).then(function(){toastMsg('Website link copied!')}).catch(function(){prompt('Copy the website link:',location.href)});else prompt('Copy the website link:',location.href)}
+  function addTools(){
+    var main=document.querySelector('main'),stats=main&&main.querySelector('.stats');if(!stats||$('ccTools'))return;
+    var guide=document.createElement('details');guide.id='ccGuide';guide.innerHTML='<summary>✨ How to use Campus Connect in 3 steps</summary><div class="guide-grid"><div class="guide-step"><span class="guide-ico">🔎</span><b>1. Search</b><span>Find an item by name, category, or location. Narrow the list using filters.</span></div><div class="guide-step"><span class="guide-ico">📣</span><b>2. Report an item</b><span>Choose Lost or Found, then add clear details and the date.</span></div><div class="guide-step"><span class="guide-ico">🤝</span><b>3. Return it safely</b><span>Verify a secret identifying detail. Never include a phone number, room number, or ID number in a public post.</span></div></div>';
+    stats.insertAdjacentElement('afterend',guide);
+    var list=$('list'),tools=document.createElement('div');tools.id='ccTools';tools.innerHTML='<span class="tool-label">FIND YOUR ITEM FASTER</span><select id="ccSort" aria-label="Sort items"><option value="newest">Newest first</option><option value="oldest">Oldest first</option><option value="az">Name A–Z</option></select><button id="ccSavedOnly" type="button" aria-pressed="false">♡ Saved <span id="ccSavedCount">0</span></button><div class="tool-actions"><button id="ccClear" type="button">Reset filters</button><button id="ccShare" type="button">↗ Share board</button><button id="ccExport" type="button">↓ Export CSV</button></div><div id="ccCount" aria-live="polite"></div>';
+    list.insertAdjacentElement('beforebegin',tools);
+    $('ccSort').addEventListener('change',function(){sortMode=this.value;enhance()});
+    $('ccSavedOnly').addEventListener('click',function(){onlySaved=!onlySaved;this.classList.toggle('active',onlySaved);this.setAttribute('aria-pressed',String(onlySaved));this.innerHTML=(onlySaved?'♥':'♡')+' Saved <span id="ccSavedCount">'+favorites.length+'</span>';enhance()});
+    $('ccClear').addEventListener('click',function(){ $('ft').value='';$('fs').value='open';$('q').value='';fcat='';document.querySelectorAll('#chips button').forEach(function(b){b.setAttribute('aria-pressed',b.getAttribute('data-c')==='')});onlySaved=false;$('ccSavedOnly').classList.remove('active');$('ccSavedOnly').setAttribute('aria-pressed','false');$('ccSavedOnly').innerHTML='♡ Saved <span id="ccSavedCount">'+favorites.length+'</span>';sortMode='newest';$('ccSort').value='newest';render();toastMsg('Filters have been reset.')});
+    $('ccShare').addEventListener('click',shareBoard);$('ccExport').addEventListener('click',exportItems);
+    var top=document.createElement('button');top.id='ccTop';top.type='button';top.setAttribute('aria-label','Back to top');top.textContent='↑';document.body.appendChild(top);top.addEventListener('click',function(){window.scrollTo({top:0,behavior:'smooth'})});window.addEventListener('scroll',function(){top.classList.toggle('show',window.scrollY>500)},{passive:true});
+  }
+  function enhance(){var list=$('list');if(!list)return;var cards=Array.prototype.slice.call(list.querySelectorAll('.sc'));
+    cards.forEach(function(card){var hd=card.querySelector('[data-card]');if(!hd)return;var id=hd.getAttribute('data-card'),saved=favorites.indexOf(String(id))>-1;var b=card.querySelector('.cc-fav');if(!b){b=document.createElement('button');b.type='button';b.className='cc-fav';b.setAttribute('data-fav',id);b.setAttribute('aria-label','Save item');b.setAttribute('title','Save item');hd.appendChild(b)}b.classList.toggle('saved',saved);b.setAttribute('aria-pressed',String(saved));b.setAttribute('aria-label',saved?'Remove from saved items':'Save item');
+      var item=(items||[]).filter(function(x){return String(x.id)===String(id)})[0];card.dataset.sortname=item?(item.name||'').toLowerCase():'';card.dataset.sortdate=item?(item.date||''):'';card.dataset.saved=saved?'1':'0';
+      card.style.display=(onlySaved&&!saved)?'none':'';
+    });
+    cards.sort(function(a,b){if(sortMode==='az')return a.dataset.sortname.localeCompare(b.dataset.sortname);var d=(a.dataset.sortdate||'').localeCompare(b.dataset.sortdate||'');return sortMode==='oldest'?d:-d});cards.forEach(function(c){list.appendChild(c)});
+    var shown=cards.filter(function(c){return c.style.display!=='none'}).length;
+    if($('ccSavedCount'))$('ccSavedCount').textContent=favorites.length;
+    if($('ccCount'))$('ccCount').textContent=shown+' item'+(shown===1?'':'s')+' shown · '+favorites.length+' saved';
+    if(onlySaved&&shown===0){var empty=list.querySelector('.cc-saved-empty');if(!empty){empty=document.createElement('div');empty.className='empty cc-saved-empty';empty.textContent='No saved items yet. Tap ♡ on an item card to save it here.';list.appendChild(empty)}}else{var e=list.querySelector('.cc-saved-empty');if(e)e.remove()}
+  }
+  var oldRender=window.render;
+  if(typeof oldRender==='function'){window.render=function(){oldRender();enhance()}}
+  document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('[data-fav]');if(!b)return;e.preventDefault();e.stopPropagation();var id=String(b.getAttribute('data-fav')),ix=favorites.indexOf(id);if(ix>-1){favorites.splice(ix,1);toastMsg('Removed from saved items.')}else{favorites.push(id);toastMsg('Item saved. You can find it again under Saved.')}saveFav();enhance()},true);
+  document.addEventListener('keydown',function(e){if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='k'){e.preventDefault();$('q').focus();$('q').scrollIntoView({behavior:'smooth',block:'center'})}if(e.key==='Escape'&&document.activeElement===$('q')){$('q').value='';render()}});
+  var search=$('q');if(search){search.placeholder='Search items… (Ctrl/⌘ + K)';search.setAttribute('aria-description','Keyboard shortcut Ctrl or Command plus K to focus search')}
+  addTools();enhance();
+})();
+</script>
+
+
+<script>
+(function(){
+  var STORE='campus_student_feedback_v1';
+  function getRows(){try{return JSON.parse(localStorage.getItem(STORE)||'[]')}catch(e){return []}}
+  function escCsv(v){return '"'+String(v==null?'':v).replace(/"/g,'""')+'"'}
+  var form=document.getElementById('feedbackForm'); if(!form)return;
+  form.addEventListener('submit',function(e){
+    e.preventDefault();
+    var rating=form.querySelector('input[name="fbRating"]:checked');
+    var message=document.getElementById('fbMessage').value.trim();
+    if(!rating||!message){document.getElementById('fbStatus').textContent='Please choose a rating and enter your feedback.';return;}
+    var rows=getRows();
+    rows.push({submittedAt:new Date().toISOString(),name:document.getElementById('fbName').value.trim(),classYear:document.getElementById('fbCourse').value.trim(),rating:rating.value,topic:document.getElementById('fbTopic').value,message:message});
+    try{localStorage.setItem(STORE,JSON.stringify(rows));form.reset();document.getElementById('fbStatus').textContent='Thank you! Feedback saved on this device.';}
+    catch(err){document.getElementById('fbStatus').textContent='Could not save feedback in this browser. Please try again.';}
+  });
+  document.getElementById('fbExport').addEventListener('click',function(){
+    var rows=getRows();var status=document.getElementById('fbAdminStatus');
+    if(!rows.length){status.textContent='No feedback saved in this browser yet.';return;}
+    var keys=['submittedAt','name','classYear','rating','topic','message'];
+    var csv=[keys.map(escCsv).join(',')].concat(rows.map(function(r){return keys.map(function(k){return escCsv(r[k])}).join(',')})).join('\r\n');
+    var blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8;'});var url=URL.createObjectURL(blob);var a=document.createElement('a');a.href=url;a.download='campus-student-feedback.csv';document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(url)},1000);status.textContent='CSV downloaded: '+rows.length+' response(s) from this device.';
+  });
+  document.getElementById('fbCountBtn').addEventListener('click',function(){var n=getRows().length;document.getElementById('fbAdminStatus').textContent='Saved on this device: '+n+' response(s).';});
+})();
+</script>
+
+</body>
+</html>
