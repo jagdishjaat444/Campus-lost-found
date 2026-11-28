@@ -509,6 +509,12 @@ input,select,textarea{transition:border-color .18s,box-shadow .18s,transform .18
 #studentFeedback .fb-submit{width:100%;margin-top:15px;padding:13px 16px;border:0;border-radius:13px;background:var(--h1c);color:white;font:800 .95rem var(--bd);cursor:pointer}#studentFeedback .fb-note{font-size:.78rem;color:var(--mute);line-height:1.5}#studentFeedback .fb-admin{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}#studentFeedback .fb-admin button{border:1px solid var(--line);border-radius:11px;padding:9px 12px;background:var(--chip);color:var(--ink);font-weight:750;cursor:pointer}#fbStatus{font-weight:750;font-size:.9rem;margin-top:10px}
 @media(max-width:520px){#studentFeedback{margin:22px 14px;padding:17px;border-radius:21px}}
 
+
+/* sign-in row: stack on phones so the email box is full width */
+#authPanel .auth-row{flex-wrap:wrap}
+#authPanel .auth-row input{flex:1 1 220px;min-width:0;width:100%}
+#authPanel .auth-row button{flex:1 1 100%;width:100%;margin-top:0}
+@media(min-width:560px){#authPanel .auth-row{flex-wrap:nowrap}#authPanel .auth-row input{flex:1 1 auto}#authPanel .auth-row button{flex:none;width:auto}}
 </style>
 
 </head>
